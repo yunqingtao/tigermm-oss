@@ -1,0 +1,85 @@
+{
+  "查信息": {
+    "patterns": [
+      "查",
+      "搜索",
+      "查一下",
+      "搜一下",
+      "百度",
+      "google",
+      "查询",
+      "搜"
+    ],
+    "tool": "web_search",
+    "desc": "多引擎网络搜索",
+    "say": [
+      "查一下济南天气",
+      "百度Python教程",
+      "搜一下虎哥"
+    ],
+    "params": {
+      "query": {
+        "type": "string"
+      },
+      "limit": {
+        "type": "string",
+        "value": "5"
+      }
+    },
+    "extract": {
+      "query": {
+        "mode": "after_keyword",
+        "strip_leading": [
+          "一个",
+          "一下",
+          "个",
+          "下"
+        ],
+        "strip_tail": [
+          "的新闻",
+          "的消息",
+          "的信息",
+          "的最新"
+        ]
+      }
+    }
+  },
+  "网络搜索": {
+    "patterns": [
+      "搜索",
+      "查一下",
+      "搜一下",
+      "百度",
+      "google",
+      "查"
+    ],
+    "tool": "web_search",
+    "desc": "网络搜索 + 天气",
+    "params": {
+      "query": {
+        "type": "string"
+      },
+      "limit": {
+        "type": "string",
+        "value": "5"
+      }
+    },
+    "extract": {
+      "query": {
+        "mode": "after_keyword",
+        "strip_leading": [
+          "一个",
+          "一下",
+          "个",
+          "下"
+        ],
+        "strip_tail": [
+          "的新闻",
+          "的消息",
+          "的信息",
+          "的最新"
+        ]
+      }
+    }
+  }
+}

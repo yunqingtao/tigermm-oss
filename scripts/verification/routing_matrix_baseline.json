@@ -1,0 +1,633 @@
+{
+ "note": "路由矩阵基线 — 当前实现下每句消息的胜出者。改行为后需人工确认再更新。",
+ "corpus_note": [
+  "命令: /stats",
+  "命令: /cost",
+  "命令: /stats-old(legacy)",
+  "命令: /hive",
+  "命令: /tool",
+  "技能: write-office-doc",
+  "技能: make-slides",
+  "技能: write-proposal",
+  "技能: write-resume",
+  "技能: write-self-review",
+  "技能: table-to-report (三步 DAG)",
+  "技能: diagram(缺参)",
+  "缺信息 → 只读自查预填 (lookup.prefill)",
+  "要动手 → 指示优先调工具 (lookup.prefill)",
+  "问概念 → 不注入自查块 (model.fallback)",
+  "TaskPlanner: 2+ 多步词",
+  "TaskPlanner: 堆多步词 ★2026-09-19修: 曾在缺内容时发垃圾邮件 → 现在问你要内容",
+  "分析+路径 → 预读",
+  "分析+路径 → 预读",
+  "空输入",
+  "噪声",
+  "插件: openmeteo",
+  "plugin.geocode ★2026-09-19修: 曾落 general",
+  "插件: 翻译?",
+  "web_search ★2026-09-19修: 曾被 brain 硬编码 tech 答案截走",
+  "web_search ★2026-09-19修: 曾被 knowledge 罐头答案截走",
+  "open_browser ★2026-09-19修: 曾被 search 抢走",
+  "★2026-09-19修: 曾被 intent_reasoner 判 list 列了 PROJECT_ROOT → 现在走模型",
+  "★2026-09-19修: 同上 (len=15 未过分析层门槛, 曾落 IR chain 列目录)",
+  "@模型 → 直通",
+  "@模型 > 搜索",
+  "@模型 > 天气插件",
+  "@模型 > 开站",
+  "@模型 > 坐标插件",
+  "@ollama 例外 (不被 900 接走)",
+  "SmartRoute: 长文本",
+  "IR: 写文件(缺参)",
+  "IR: 文件发送(列目录)",
+  "★2026-09-19修: 曾被判 check_mail(读收件箱)! 现在 send_email 意图 → 缺正文则要内容",
+  "★2026-09-19修: 同上 (creation 形态)",
+  "★2026-09-19修: 曾发两封 + 被'你好'罐头劫持 → 现在单步 send_email",
+  "读类 → 不生成",
+  "通用 → 模型",
+  "问候",
+  "Fix Context Guard",
+  "desktop(已打桩)",
+  "FTS 历史",
+  "模型兜底",
+  "模型兜底"
+ ],
+ "rows": [
+  {
+   "msg": "/stats",
+   "ext": null,
+   "intent": "stats",
+   "skill": null,
+   "route": "cmd.stats",
+   "model": "local",
+   "resp": "运行: 0h0m2s | 请求: 1 | 错误: 0",
+   "side": []
+  },
+  {
+   "msg": "/cost",
+   "ext": null,
+   "intent": "cost",
+   "skill": null,
+   "route": "cmd.cost",
+   "model": "local",
+   "resp": "💰 Token用量:\n  deepseek           3652 calls  18,930,762 in  1,008,931 o",
+   "side": []
+  },
+  {
+   "msg": "/stats-old",
+   "ext": null,
+   "intent": "stats",
+   "skill": null,
+   "route": "cmd.stats_old",
+   "model": "local",
+   "resp": "运行: 0h0m2s | 请求: 3 | 错误: 0",
+   "side": []
+  },
+  {
+   "msg": "/hive 拆解这个任务",
+   "ext": null,
+   "intent": "hive",
+   "skill": null,
+   "route": "cmd.hive",
+   "model": "local",
+   "resp": "\n=== Hive: 0/0 agents ===",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "/tool system_info",
+   "ext": null,
+   "intent": "tool",
+   "skill": null,
+   "route": "cmd.tool",
+   "model": "local",
+   "resp": "{'success': True, 'output': '[stub-tool]', 'path': ''}",
+   "side": [
+    "gateway:system_info"
+   ]
+  },
+  {
+   "msg": "写周报，本周修了 MCP 泄漏，存到 {SBX}/w.docx",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "write-office-doc",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-office-doc: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "做PPT讲项目进展，存到 {SBX}/p.pptx",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "make-slides",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ make-slides: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_ppt",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "写个新功能上线的推广方案",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "write-proposal",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-proposal: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "帮我写份简历，五年测试经验",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "write-resume",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-resume: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "写份述职报告，今年做了三个项目",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "write-self-review",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-self-review: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "把这个表格做成分析报告 {SBX}/t.xlsx 到 {SBX}/r.docx",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "table-to-report",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ table-to-report: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:analyze_table",
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "画个架构图",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "diagram",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ diagram: [stub-tool]",
+   "side": [
+    "gateway:plantuml",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "帮我看看这100个Excel怎么归类",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "lookup.prefill",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "把这批文件整理一下",
+   "ext": null,
+   "intent": "file_organize",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "[stub-tool]",
+   "side": [
+    "gateway:file_ops:organize"
+   ]
+  },
+  {
+   "msg": "解释一下什么是闭包",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "先写公司背景，再写推广方案，最后给出预算",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "write-proposal",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-proposal: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "然后接着再并把步骤发给涛哥",
+   "ext": null,
+   "intent": "email_prompt",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "虎哥可以帮你发邮件。请提供收件人、主题和内容。\n例如: 发邮件给 xxx@example.com 主题:你好 内容:正文",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "分析一下 {SBX}/t.xlsx 里有什么",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "analysis.goto_model",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "gateway:file_ops:read",
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "{SBX}/t.xlsx 有哪些列",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "analysis.goto_model",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "gateway:file_ops:read",
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "",
+   "ext": null,
+   "intent": "empty_input",
+   "skill": null,
+   "route": "guard.input_filter",
+   "model": "local",
+   "resp": "虎哥在。有事说事。",
+   "side": []
+  },
+  {
+   "msg": "。。。",
+   "ext": null,
+   "intent": "noise",
+   "skill": null,
+   "route": "guard.input_filter",
+   "model": "local",
+   "resp": "说人话。",
+   "side": []
+  },
+  {
+   "msg": "北京天气怎么样",
+   "ext": null,
+   "intent": "plugin:openmeteo",
+   "skill": null,
+   "route": "plugin.keyword",
+   "model": "local",
+   "resp": "北京天气\n  晴朗 | 26.8°C | 风速 11.2km/h\n  今日: 19.9°C ~ 30.8°C",
+   "side": []
+  },
+  {
+   "msg": "上海坐标是多少",
+   "ext": null,
+   "intent": "geocode",
+   "skill": null,
+   "route": "plugin.geocode",
+   "model": "local",
+   "resp": "  上海: 31.2312707, 121.4700152\n  上海",
+   "side": []
+  },
+  {
+   "msg": "把这句话翻译成英文",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "搜索一下 Python 装饰器",
+   "ext": null,
+   "intent": "search",
+   "skill": null,
+   "route": "search.web",
+   "model": "local",
+   "resp": "[stub-tool]",
+   "side": [
+    "gateway:web_search:search"
+   ]
+  },
+  {
+   "msg": "百度一下今天的新闻",
+   "ext": null,
+   "intent": "search",
+   "skill": null,
+   "route": "search.web",
+   "model": "local",
+   "resp": "[stub-tool]",
+   "side": [
+    "gateway:web_search:search"
+   ]
+  },
+  {
+   "msg": "打开百度",
+   "ext": null,
+   "intent": "open_browser",
+   "skill": null,
+   "route": "open.site",
+   "model": "local",
+   "resp": "已打开百度",
+   "side": [
+    "popen:['C:/Program Files/Google/Chrome/Applica"
+   ]
+  },
+  {
+   "msg": "这个项目有什么改进建议呢",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "分析一下这个项目有什么改进建议",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "lookup.prefill",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "@deepseek 帮我看看这个怎么写",
+   "ext": "deepseek",
+   "intent": "general",
+   "skill": null,
+   "route": "model.explicit",
+   "model": "deepseek",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "@deepseek 搜索一下 Python 装饰器",
+   "ext": "deepseek",
+   "intent": "general",
+   "skill": null,
+   "route": "model.explicit",
+   "model": "deepseek",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "@deepseek 北京天气怎么样",
+   "ext": "deepseek",
+   "intent": "general",
+   "skill": null,
+   "route": "model.explicit",
+   "model": "deepseek",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "@deepseek 打开百度",
+   "ext": "deepseek",
+   "intent": "general",
+   "skill": null,
+   "route": "model.explicit",
+   "model": "deepseek",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "@deepseek 上海坐标是多少",
+   "ext": "deepseek",
+   "intent": "general",
+   "skill": null,
+   "route": "model.explicit",
+   "model": "deepseek",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "@ollama 先写背景，再写方案",
+   "ext": "ollama",
+   "intent": "skill_dag",
+   "skill": "write-proposal",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ write-proposal: [stub-tool]",
+   "side": [
+    "gateway:tiger_office:write_word",
+    "llm:deepseek"
+   ]
+  },
+  {
+   "msg": "这是很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，很长的一段话，请分析",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "analysis.goto_model",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "写文件",
+   "ext": null,
+   "intent": "file_write",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "[stub-tool]",
+   "side": [
+    "gateway:file_ops:write"
+   ]
+  },
+  {
+   "msg": "把桌面文件发给涛哥",
+   "ext": null,
+   "intent": "file_send_list",
+   "skill": null,
+   "route": "brain.route",
+   "model": "local",
+   "resp": "[涛哥] 目录:\n  chrome-recorder/ (4096B)\n  coin_pusher.html (8502B)\n  herme",
+   "side": []
+  },
+  {
+   "msg": "给涛哥写封邮件",
+   "ext": null,
+   "intent": "email_prompt",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "虎哥可以帮你发邮件。请提供收件人、主题和内容。\n例如: 发邮件给 xxx@example.com 主题:你好 内容:正文",
+   "side": []
+  },
+  {
+   "msg": "给涛哥发封邮件",
+   "ext": null,
+   "intent": "email_prompt",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "虎哥可以帮你发邮件。请提供收件人、主题和内容。\n例如: 发邮件给 xxx@example.com 主题:你好 内容:正文",
+   "side": []
+  },
+  {
+   "msg": "发邮件给 x@y.com 主题:嗨 内容:你好",
+   "ext": null,
+   "intent": "chain",
+   "skill": null,
+   "route": "ir.chain",
+   "model": "local",
+   "resp": "涛哥已收到。",
+   "side": [
+    "gateway:send_email:send"
+   ]
+  },
+  {
+   "msg": "帮我看看这份周报",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "这个代码怎么优化",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "你好",
+   "ext": null,
+   "intent": "tech",
+   "skill": null,
+   "route": "brain.route",
+   "model": null,
+   "resp": "你好！虎哥在此，有事儿你说。",
+   "side": []
+  },
+  {
+   "msg": "帮我修一下",
+   "ext": null,
+   "intent": "fix_context_guard",
+   "skill": null,
+   "route": "fixguard.context",
+   "model": "local",
+   "resp": "说清楚点，你想修哪个？\n  1. 最近改过 scripts\\verification\\verify_routing_matrix.py\n  ",
+   "side": []
+  },
+  {
+   "msg": "截个屏",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "搜一下之前聊过的部署",
+   "ext": null,
+   "intent": "skill_dag",
+   "skill": "session-logs",
+   "route": "skill.trigger_first",
+   "model": "local",
+   "resp": "✓ session-logs: [stub-llm]",
+   "side": [
+    "gateway:session_logs:recent",
+    "llm:ollama"
+   ]
+  },
+  {
+   "msg": "说个笑话",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  },
+  {
+   "msg": "解释一下什么是闭包",
+   "ext": null,
+   "intent": "general",
+   "skill": null,
+   "route": "model.fallback",
+   "model": "auto",
+   "resp": "[stub-llm]",
+   "side": [
+    "llm:auto"
+   ]
+  }
+ ]
+}

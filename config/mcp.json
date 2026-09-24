@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "cua-driver": {
+      "command": "cua-driver.exe",
+      "args": [
+        "mcp"
+      ],
+      "env": {
+        "CUA_DRIVER_LOG": "off"
+      },
+      "enabled": true
+    }
+  }
+}

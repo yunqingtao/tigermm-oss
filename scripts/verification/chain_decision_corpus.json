@@ -1,0 +1,320 @@
+{
+ "what": "「要不要成链」判定语料 (人工标注)",
+ "labels": {
+  "plan": "该走显式多步链条",
+  "skill": "该走技能",
+  "single": "单步/不该成链"
+ },
+ "cases": [
+  {
+   "msg": "先查端口，再查进程，然后出一份健康检查报告",
+   "expect": "plan",
+   "note": "三工具链, 无现成技能"
+  },
+  {
+   "msg": "查一下系统状态和磁盘，整理成一份报告存到桌面",
+   "expect": "plan",
+   "note": "无连接词但真多步(陷阱:现规则可能漏)"
+  },
+  {
+   "msg": "先看看模型用量，再统计一下今天花了多少钱",
+   "expect": "plan",
+   "note": "两查询+汇总"
+  },
+  {
+   "msg": "读一下这个文件，然后总结要点存到桌面",
+   "expect": "plan",
+   "note": "读+写两条链, 有落盘目标"
+  },
+  {
+   "msg": "把最近三天的日志汇总一下，挑出报错，写成一份分析",
+   "expect": "plan",
+   "note": "无连接词(陷阱)"
+  },
+  {
+   "msg": "查一下服务器上的日志，再整理成报告",
+   "expect": "plan",
+   "note": "无技能触发词的多步(陷阱:只1个连接词)"
+  },
+  {
+   "msg": "列出项目目录，挑出最大的十个文件，写成一份清单",
+   "expect": "plan",
+   "note": "无连接词(陷阱)"
+  },
+  {
+   "msg": "先查网络通不通，再看代理有没有开，然后告诉我结论并存一份记录",
+   "expect": "plan",
+   "note": "三步+落盘"
+  },
+  {
+   "msg": "先翻译这段英文，再润色一下，最后存成文件",
+   "expect": "plan",
+   "note": "三步+落盘"
+  },
+  {
+   "msg": "看看今天天气，再查一下限行，然后规划一下出行",
+   "expect": "plan",
+   "note": "两查询+汇总"
+  },
+  {
+   "msg": "先统计代码行数，再按语言分类，出一份报告",
+   "expect": "plan",
+   "note": "两步+汇总"
+  },
+  {
+   "msg": "查一下 ollama 有哪些模型，看看哪些能看图，整理成表格",
+   "expect": "plan",
+   "note": "无连接词(陷阱)"
+  },
+  {
+   "msg": "先把这份材料翻译成英文，再存成 Word",
+   "expect": "plan",
+   "note": "两步+落盘"
+  },
+  {
+   "msg": "查一下进程占用最高的几个，然后写成一份排查记录",
+   "expect": "plan",
+   "note": "只有1个连接词(陷阱)"
+  },
+  {
+   "msg": "先看看测试结果，把失败项挑出来，再整理成清单",
+   "expect": "plan",
+   "note": "三步"
+  },
+  {
+   "msg": "看看磁盘剩余空间，算一下还能撑几天，写成提醒",
+   "expect": "plan",
+   "note": "无连接词(陷阱)"
+  },
+  {
+   "msg": "把这三个文件都读一遍，比较一下不同，写成一份对比",
+   "expect": "plan",
+   "note": "无连接词(陷阱)"
+  },
+  {
+   "msg": "先查这个包的信息，再看许可证，然后给个采用建议",
+   "expect": "plan",
+   "note": "三步"
+  },
+  {
+   "msg": "查一下我最近改过的文件，整理成一份清单存到桌面",
+   "expect": "plan",
+   "note": "无连接词+落盘(陷阱)"
+  },
+  {
+   "msg": "先看看端口占用，再把多余的进程杀掉",
+   "expect": "plan",
+   "note": "两步"
+  },
+  {
+   "msg": "电脑状态报告",
+   "expect": "skill",
+   "note": "pc-checkup 自己的触发词(曾被守卫挡)"
+  },
+  {
+   "msg": "给电脑做个体检",
+   "expect": "skill",
+   "note": "pc-checkup 触发词"
+  },
+  {
+   "msg": "服务都好吗",
+   "expect": "skill",
+   "note": "healthcheck, answer_mode"
+  },
+  {
+   "msg": "引擎还在吗",
+   "expect": "skill",
+   "note": "healthcheck, answer_mode"
+  },
+  {
+   "msg": "我们之前聊过双色球吗",
+   "expect": "skill",
+   "note": "session-logs, answer_mode"
+  },
+  {
+   "msg": "看看最近的会话日志",
+   "expect": "skill",
+   "note": "session-logs(触发词本轮刚补)"
+  },
+  {
+   "msg": "模型用量",
+   "expect": "skill",
+   "note": "model-usage"
+  },
+  {
+   "msg": "今天花了多少钱",
+   "expect": "skill",
+   "note": "model-usage 语义近义"
+  },
+  {
+   "msg": "我的github有什么动静",
+   "expect": "skill",
+   "note": "github-issues"
+  },
+  {
+   "msg": "帮我写周报",
+   "expect": "skill",
+   "note": "write-office-doc"
+  },
+  {
+   "msg": "出份分析报告",
+   "expect": "skill",
+   "note": "table-to-report"
+  },
+  {
+   "msg": "做PPT",
+   "expect": "skill",
+   "note": "make-slides"
+  },
+  {
+   "msg": "生成一张图",
+   "expect": "skill",
+   "note": "make-image"
+  },
+  {
+   "msg": "看看这张图",
+   "expect": "skill",
+   "note": "look-at-image"
+  },
+  {
+   "msg": "念给我听",
+   "expect": "skill",
+   "note": "speak-aloud"
+  },
+  {
+   "msg": "帮我审一下这份稿子",
+   "expect": "skill",
+   "note": "second-opinion"
+  },
+  {
+   "msg": "转写这段录音",
+   "expect": "skill",
+   "note": "transcribe-audio"
+  },
+  {
+   "msg": "产出了什么",
+   "expect": "skill",
+   "note": "artifacts-inventory"
+  },
+  {
+   "msg": "把这段话念出来",
+   "expect": "skill",
+   "note": "speak-aloud 触发词"
+  },
+  {
+   "msg": "读一下这个PDF",
+   "expect": "skill",
+   "note": "pdf-extract 触发词"
+  },
+  {
+   "msg": "先看看这个文件",
+   "expect": "single",
+   "note": "1连接词无落盘"
+  },
+  {
+   "msg": "帮我看看这份周报",
+   "expect": "single",
+   "note": "泛化请求, 不含技能触发词"
+  },
+  {
+   "msg": "看看这个文件里写了什么",
+   "expect": "single",
+   "note": "单步"
+  },
+  {
+   "msg": "天气怎么样",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "磁盘还剩多少",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "查一下端口占用",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "这段代码怎么优化",
+   "expect": "single",
+   "note": "分析类, 不该成链"
+  },
+  {
+   "msg": "你是谁",
+   "expect": "single",
+   "note": "闲聊"
+  },
+  {
+   "msg": "今天几号",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "直接做，先查端口再查进程",
+   "expect": "single",
+   "note": "显式豁免前缀"
+  },
+  {
+   "msg": "先别做，看看就行",
+   "expect": "single",
+   "note": "否定"
+  },
+  {
+   "msg": "然后再把这句发给涛哥",
+   "expect": "single",
+   "note": "语境依赖(陷阱: 2 个词会误判成多步)"
+  },
+  {
+   "msg": "然后呢",
+   "expect": "single",
+   "note": "废话多步词"
+  },
+  {
+   "msg": "之后再说吧",
+   "expect": "single",
+   "note": "废话"
+  },
+  {
+   "msg": "先这样",
+   "expect": "single",
+   "note": "废话"
+  },
+  {
+   "msg": "再看看刚才那个文件",
+   "expect": "single",
+   "note": "指代单步"
+  },
+  {
+   "msg": "把这段话整理一下",
+   "expect": "single",
+   "note": "单步"
+  },
+  {
+   "msg": "打开浏览器",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "帮我查一下这个包",
+   "expect": "single",
+   "note": "单工具"
+  },
+  {
+   "msg": "总结一下我们刚才聊的",
+   "expect": "single",
+   "note": "单步总结"
+  },
+  {
+   "msg": "先不急着写，先看看再说",
+   "expect": "single",
+   "note": "否定/犹豫(陷阱: 两个'先')"
+  },
+  {
+   "msg": "删掉整个项目目录",
+   "expect": "single",
+   "note": "危险拦截, 不该成链"
+  }
+ ]
+}

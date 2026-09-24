@@ -1,0 +1,65 @@
+# Tiger.M.M v7.1 → v7.5 进化路线图
+# 提炼自 GitHub Trending 2026.07
+
+## 已完成
+
+### P0: Inbox 审批队列 (v7.1)
+来源: OpenWorker (andrewyng/aisuite)
+- asyncio.Event 异步等待替代 input() 阻塞
+- SQLite 持久化审批状态机
+- 多表面响应 (CLI / API)
+- Session allow 记忆
+
+---
+
+## 下一步
+
+### P1: 多模型并行 PK (v7.2)
+来源: orca (stablyai/orca ⭐28.8k)
+
+orca 核心模式: Parallel Worktrees
+  - 一个 prompt 扇出到 5 个 agent
+  - 每个在独立 git worktree 里跑
+  - 比较结果，合并胜者
+
+Tiger 适配:
+  - /pk <prompt> → 同时发给 mimo + deepseek + qwen
+  - 每个模型独立上下文，并行推理
+  - 结果对比面板: 一致性 / 分歧点 / 置信度
+  - 已有基础: multi-model-debate skill (PK Arena)
+
+### P2: CLI 多 Session 管理 (v7.3)
+来源: herdr (ogulcancelik/herdr ⭐20.6k)
+
+herdr 核心模式: Terminal Agent Multiplexer
+  - 多 pane 管理多个 agent session
+  - Detach/reattach: agent 后台跑，随时切回
+  - Socket API: agent 间互相通信
+  - 一个 Rust 二进制，无 Electron
+
+Tiger 适配:
+  - /spawn <task> → 后台启动子 session
+  - /sessions → 列出活跃 session
+  - /attach <id> → 切换到指定 session
+  - /kill <id> → 终止 session
+  - Session 输出持久化，重启恢复
+
+### P3: Guardrails 安全层 (v7.4)
+来源: openai-agents-python (openai/openai-agents-python ⭐28k)
+
+核心模式: Input/Output Guardrails
+  - 输入检查: 拒绝危险指令
+  - 输出检查: 拦截敏感信息
+  - Handoffs: Agent 间安全委托
+
+Tiger 适配:
+  - 接入现有 sandbox/ 层
+  - 命令执行前风险分级
+  - 敏感输出脱敏
+
+### P4: Office 工具链 (v7.5)
+来源: iOfficeAI/OfficeCLI ⭐22k
+
+Tiger 适配:
+  - tiger_office.py 调用 OfficeCLI 单二进制
+  - 读写 Word/Excel/PPT 无需装 Office

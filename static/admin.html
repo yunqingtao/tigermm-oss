@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiger.M.M Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0502;color:#ffac02;font:14px/1.6 'Microsoft YaHei',sans-serif;display:flex;min-height:100vh}
+nav{width:200px;background:#0d0805;padding:20px 0;border-right:1px solid #ffac0218}
+nav h2{padding:0 20px 15px;font-size:16px;border-bottom:1px solid #ffac0212;margin-bottom:15px}
+nav a{display:block;padding:8px 20px;color:#ffac0288;text-decoration:none;font-size:13px;cursor:pointer}
+nav a:hover,nav a.active{color:#ffac02;background:#ffac0208}
+main{flex:1;padding:20px}
+.panel{display:none}
+.panel.active{display:block}
+h3{font-size:18px;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #ffac0212}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #ffac0208}
+th{color:#ffac0288;font-weight:normal}
+td{color:#ffac02cc}
+input,select,button{background:#1a0f05;color:#ffac02;border:1px solid #ffac0244;padding:8px 12px;border-radius:4px;font-size:13px;outline:none}
+input:focus{border-color:#ffac02}
+button{background:#ffac02;color:#0a0502;font-weight:bold;cursor:pointer;border:none}
+button:hover{opacity:.8}
+button.danger{background:#ff4444}
+.toast{position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#0a0502;font-weight:bold;z-index:999;animation:fadeIn .3s}
+.toast.success{background:#44ff44}
+.toast.error{background:#ff4444}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.form-row{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+.form-row label{min-width:80px;color:#ffac0288}
+.badge{padding:2px 8px;border-radius:3px;font-size:11px}
+.badge.admin{background:#ffac0220}
+.badge.user{background:#ffac0208}
+.badge.locked{background:#ff444420;color:#ff4444}
+tr:hover{background:#ffac0204}
+</style>
+</head>
+<body>
+
+<nav>
+  <h2>Tiger.M.M</h2>
+  <a class="active" onclick="showPanel('users')">用户管理</a>
+  <a onclick="showPanel('audit')">审计日志</a>
+  <a onclick="showPanel('config')">系统配置</a>
+  <a onclick="logout()" style="color:#ff4444">退出</a>
+</nav>
+
+<main>
+  <div id="users" class="panel active">
+    <h3>用户管理</h3>
+    <div class="form-row">
+      <input id="newUser" placeholder="用户名">
+      <input id="newPass" type="password" placeholder="密码">
+      <select id="newRole"><option value="user">User</option><option value="admin">Admin</option></select>
+      <button onclick="createUser()">创建用户</button>
+    </div>
+    <table><thead><tr><th>用户名</th><th>角色</th><th>最后登录</th><th>IP</th><th>状态</th><th>操作</th></tr></thead>
+    <tbody id="userTable"></tbody></table>
+  </div>
+
+  <div id="audit" class="panel">
+    <h3>审计日志</h3>
+    <table><thead><tr><th>时间</th><th>用户</th><th>操作</th><th>IP</th><th>详情</th></tr></thead>
+    <tbody id="auditTable"></tbody></table>
+  </div>
+
+  <div id="config" class="panel">
+    <h3>系统配置</h3>
+    <div class="form-row">
+      <label>运行模式</label>
+      <select id="runMode" onchange="saveConfig()">
+        <option value="full">全功能模式</option>
+        <option value="lightweight">轻量模式</option>
+      </select>
+    </div>
+    <p style="color:#ffac0288;font-size:12px;margin-top:10px">
+      全功能: 完整上下文 + 长期记忆 + 全部工具 (大窗口模型)<br>
+      轻量:   短上下文 + 无长期记忆 + 精简工具 (2B-7B 模型)
+    </p>
+  </div>
+</main>
+
+<script>
+let TOKEN = localStorage.getItem('tmm_admin_token') || '';
+
+async function api(method, path, body) {
+  const headers = {'Content-Type':'application/json'};
+  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  const r = await fetch(path, {method,headers,body:body?JSON.stringify(body):undefined});
+  return r.json();
+}
+
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+  if (name === 'users') loadUsers();
+  if (name === 'audit') loadAudit();
+  if (name === 'config') loadConfig();
+}
+
+async function loadUsers() {
+  const r = await api('GET', '/admin/api/users');
+  const tbody = document.getElementById('userTable');
+  tbody.innerHTML = r.users.map(u => {
+    const locked = u.locked_until && u.locked_until > Date.now()/1000;
+    const disabled = u.token.startsWith('disabled-');
+    const badge = locked ? '<span class="badge locked">锁定</span>' :
+                  disabled ? '<span class="badge locked">禁用</span>' :
+                  u.role === 'admin' ? '<span class="badge admin">Admin</span>' :
+                  '<span class="badge user">User</span>';
+    return `<tr><td>${u.username}</td><td>${u.role}</td>
+      <td>${u.last_login_time?.slice(0,16) || '-'}</td>
+      <td>${u.last_login_ip || '-'}</td><td>${badge}</td>
+      <td><button class="danger" onclick="deleteUser('${u.username}')">禁用</button></td></tr>`;
+  }).join('');
+}
+
+async function createUser() {
+  const r = await api('POST', '/admin/api/users', {
+    username: document.getElementById('newUser').value,
+    password: document.getElementById('newPass').value,
+    role: document.getElementById('newRole').value
+  });
+  if (r.success) { toast('创建成功'); loadUsers(); }
+  else toast(r.message, 'error');
+}
+
+async function deleteUser(name) {
+  if (!confirm('禁用用户 ' + name + '?')) return;
+  const r = await api('DELETE', '/admin/api/users/' + name);
+  if (r.success) { toast('已禁用'); loadUsers(); }
+  else toast(r.message, 'error');
+}
+
+async function loadAudit() {
+  const r = await api('GET', '/admin/api/audit?limit=100');
+  document.getElementById('auditTable').innerHTML = r.entries.map(e =>
+    `<tr><td>${e.timestamp?.slice(0,19)||''}</td><td>${e.username}</td>
+     <td>${e.action}</td><td>${e.ip}</td><td>${e.detail}</td></tr>`
+  ).join('');
+}
+
+async function loadConfig() {
+  const r = await api('GET', '/admin/api/config');
+  document.getElementById('runMode').value = r.config.run_mode;
+}
+
+async function saveConfig() {
+  const mode = document.getElementById('runMode').value;
+  await api('POST', '/admin/api/config', {run_mode: mode});
+  toast('配置已保存，重启生效');
+}
+
+function logout() {
+  localStorage.removeItem('tmm_admin_token');
+  location.reload();
+}
+
+// Init
+if (!TOKEN) {
+  TOKEN = prompt('Enter admin token:');
+  if (TOKEN) localStorage.setItem('tmm_admin_token', TOKEN);
+}
+loadUsers();
+</script>
+</body>
+</html>

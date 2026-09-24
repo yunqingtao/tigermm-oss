@@ -1,0 +1,32 @@
+{
+  "_说明": "复制此文件为 keys.json，填入API Key。至少配置一个模型。",
+  "_如何获取": {
+    "deepseek": "platform.deepseek.com → API Keys",
+    "mimo": "api.xiaomimimo.com → 控制台"
+  },
+  "deepseek": {
+    "key": "sk-把你的key填这里",
+    "url": "https://api.deepseek.com",
+    "model": "deepseek-chat"
+  },
+  "mimo": {
+    "key": "",
+    "url": "https://api.xiaomimimo.com/v1",
+    "model": "mimo-v2.5"
+  },
+  "ollama": {
+    "key": "ollama",
+    "url": "http://127.0.0.1:11434/v1",
+    "model": "qwen2.5:7b"
+  },
+  "qwen": {
+    "key": "",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.7-flash"
+  },
+  "notify": {
+    "serverchan": "",
+    "pushplus": "",
+    "_说明": "可选: 微信推送。serverchan 填 Server酱 SendKey (https://sct.ftqq.com 微信扫码获取); 也可以不填 —— 不填则 push_notify 工具诚实报错，其他功能不受影响。"
+  }
+}

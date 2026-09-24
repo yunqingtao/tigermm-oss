@@ -1,0 +1,168 @@
+[
+  {
+    "id": "geo_simple",
+    "prompt": "查一下京都的坐标",
+    "expect_tools": [
+      "nominatim"
+    ],
+    "expect_keywords": [
+      "35.",
+      "135."
+    ],
+    "tags": [
+      "geo",
+      "simple"
+    ],
+    "max_time": 15
+  },
+  {
+    "id": "weather_simple",
+    "prompt": "济南今天天气怎么样",
+    "expect_tools": [
+      "openmeteo",
+      "nominatim"
+    ],
+    "expect_keywords": [
+      "°C",
+      "温度"
+    ],
+    "tags": [
+      "weather",
+      "chain"
+    ],
+    "max_time": 30
+  },
+  {
+    "id": "weather_natural",
+    "prompt": "京都的天气",
+    "expect_tools": [
+      "openmeteo"
+    ],
+    "expect_keywords": [
+      "°C"
+    ],
+    "tags": [
+      "weather",
+      "natural"
+    ],
+    "max_time": 20
+  },
+  {
+    "id": "chain_weather_push",
+    "prompt": "查一下济南的天气，翻译成英文，然后推送到 ntfy 频道 tmm-test",
+    "expect_tools": [
+      "openmeteo",
+      "libretranslate",
+      "ntfy"
+    ],
+    "expect_keywords": [
+      "°C",
+      "push",
+      "ntfy"
+    ],
+    "tags": [
+      "chain",
+      "weather",
+      "translate",
+      "push"
+    ],
+    "max_time": 60
+  },
+  {
+    "id": "analyze_file",
+    "prompt": "桌面public-apis-list.md里有哪些API能补我们项目缺口？",
+    "expect_tools": [
+      "file_read"
+    ],
+    "expect_keywords": [
+      "天气",
+      "翻译",
+      "推送",
+      "API"
+    ],
+    "tags": [
+      "analysis",
+      "file"
+    ],
+    "max_time": 60
+  },
+  {
+    "id": "geo_cities",
+    "prompt": "纽约坐标",
+    "expect_tools": [
+      "nominatim"
+    ],
+    "expect_keywords": [
+      "40.",
+      "-74."
+    ],
+    "tags": [
+      "geo",
+      "english"
+    ],
+    "max_time": 15
+  },
+  {
+    "id": "tool_help",
+    "prompt": "/tool openmeteo city=东京",
+    "expect_tools": [
+      "openmeteo"
+    ],
+    "expect_keywords": [
+      "success",
+      "temperature"
+    ],
+    "tags": [
+      "tool",
+      "direct"
+    ],
+    "max_time": 15
+  },
+  {
+    "id": "push_direct",
+    "prompt": "/tool ntfy topic=tmm-test title=测试 message=训练测试推送",
+    "expect_tools": [
+      "ntfy"
+    ],
+    "expect_keywords": [
+      "success",
+      "True"
+    ],
+    "tags": [
+      "push",
+      "direct"
+    ],
+    "max_time": 10
+  },
+  {
+    "id": "context_aware",
+    "prompt": "我们现在在做哪些项目",
+    "expect_tools": [],
+    "expect_keywords": [
+      "TMM Link",
+      "蜂巢",
+      "星港"
+    ],
+    "tags": [
+      "context",
+      "awareness"
+    ],
+    "max_time": 20
+  },
+  {
+    "id": "translate",
+    "prompt": "把 Hello World 翻译成中文",
+    "expect_tools": [
+      "libretranslate"
+    ],
+    "expect_keywords": [
+      "你好",
+      "世界"
+    ],
+    "tags": [
+      "translate",
+      "simple"
+    ],
+    "max_time": 15
+  }
+]

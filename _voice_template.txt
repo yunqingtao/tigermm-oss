@@ -1,0 +1,45 @@
+if message.strip() == '/voice':
+            import os as _o, tempfile as _tp, time as _tv2
+            t0v = time.time()
+            try: import sounddevice as _sd, soundfile as _sf, numpy as _np, whisper as _wh
+            except ImportError as e: return {"response":f"缺依赖:{e}","intent":"voice","model":"local","elapsed":0.1}
+            try:
+                print("🎤 录音中 5", flush=True); _tv2.sleep(1)
+                print("🎤 录音中 4", flush=True); _tv2.sleep(1)
+                print("🎤 录音中 3", flush=True); _tv2.sleep(1)
+                print("🎤 录音中 2", flush=True); _tv2.sleep(1)
+                print("🎤 录音中 1", flush=True); _tv2.sleep(1)
+                print("🎤 录音中 ✓", flush=True)
+                audio = _sd.rec(int(5*16000),samplerate=16000,channels=1,dtype='float32'); _sd.wait()
+                fp = _o.path.join(_tp.gettempdir(),f"tmm_v_{int(_tv2.time())}.wav")
+                _sf.write(fp,audio,16000)
+                if not hasattr(self,'_wm') or self._wm is None:
+                    self._wm = _wh.load_model("small")
+                r = self._wm.transcribe(fp,language="zh")
+                t = (r.get("text","")or"").strip()
+                if not t: return {"response":"🎤 没听到声音","intent":"voice","model":"local","elapsed":round(_tv2.time()-t0v,2)}
+                inner = await self.process(t,ext_model=ext_model)
+                rt = inner.get("response",str(inner))
+                try:
+                    import edge_tts, asyncio as _ai, re as _re2
+                    from playsound import playsound
+                    cl = _re2.sub(r'[\U0001F300-\U0001F9FF]','',rt[:800])
+                    cl = _re2.sub(r'[*_#>`|]','',cl)
+                    cl = _re2.sub(r'\n{2,}','。',cl).replace('\n','，').strip()
+                    t2 = _o.path.join(_tp.gettempdir(),f"tmm_tts_{int(_tv2.time())}.mp3")
+                    for _a in range(3):
+                        try:
+                            await edge_tts.Communicate(cl,"zh-CN-YunxiNeural").save(t2)
+                            if _o.path.getsize(t2)>1000: break
+                            _o.remove(t2)
+                        except:
+                            if _a<2: await _ai.sleep(1)
+                            else: raise
+                    playsound(t2); _o.remove(t2)
+                except Exception as e: logger.warning("TTS: %s", e)
+                return {"response":f"🎤 你说: {t}\n\n{rt}","intent":"voice","model":"local","elapsed":round(_tv2.time()-t0v,2)}
+            except Exception as e:
+                logger.error("Voice: %s",e)
+                return {"response":f"语音失败: {e}","intent":"voice","model":"local","elapsed":round(_tv2.time()-t0v,2)}
+
+        # ── /stats command ──

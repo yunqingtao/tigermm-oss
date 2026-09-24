@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiger.M.M · 分发版样板</title>
+<style>
+:root{
+  --bg-deep:#0a0502; --bg:#0c0704; --bg-card:#120b06;
+  --gold:#FFAC02; --gold-dim:rgba(255,172,2,.55); --gold-faint:rgba(255,172,2,.10);
+  --fg:#e8e2d8; --fg-dim:#8d867c; --fg-faint:#5f5a53;
+  --border:rgba(255,172,2,.14); --border-soft:rgba(255,172,2,.07);
+  --ok:#5ac47f; --warn:#e0a63c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg-deep); color:var(--fg);
+  font:15px/1.75 'Inter','Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* ── 顶栏 ── */
+header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(10,5,2,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border-soft);
+}
+header .wrap{display:flex;align-items:center;gap:16px;height:62px}
+.ring{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle,rgba(255,172,2,.20),rgba(255,172,2,.04) 60%,transparent 74%);
+  border:1px solid var(--border); position:relative;
+}
+.ring::after{
+  content:'';position:absolute;inset:7px;border-radius:50%;
+  background:var(--gold);opacity:.85;box-shadow:0 0 12px rgba(255,172,2,.5);
+}
+.brand{font-weight:600;letter-spacing:.3px}
+.brand small{color:var(--fg-faint);font-weight:400;margin-left:8px;letter-spacing:1px}
+nav{margin-left:auto;display:flex;gap:20px;font-size:13.5px}
+nav a{color:var(--fg-dim)}
+nav a:hover{color:var(--gold);text-decoration:none}
+
+/* ── Hero ── */
+.hero{padding:78px 0 56px;border-bottom:1px solid var(--border-soft);position:relative;overflow:hidden}
+.hero::before{
+  content:'';position:absolute;top:-160px;left:50%;transform:translateX(-50%);
+  width:820px;height:420px;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(255,172,2,.10),transparent 68%);
+}
+.hero h1{font-size:42px;font-weight:650;letter-spacing:-.5px;line-height:1.25}
+.hero h1 .accent{color:var(--gold)}
+.hero .tag{margin-top:16px;font-size:17px;color:var(--fg-dim);max-width:660px}
+.hero .meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.pill{
+  font-size:12.5px;padding:5px 12px;border-radius:20px;
+  border:1px solid var(--border);color:var(--gold-dim);background:var(--gold-faint);
+  letter-spacing:.4px;
+}
+.pill.plain{border-color:var(--border-soft);color:var(--fg-faint);background:transparent}
+
+/* ── 段落 ── */
+section{padding:56px 0;border-bottom:1px solid var(--border-soft)}
+section:last-of-type{border-bottom:none}
+h2{font-size:23px;font-weight:600;letter-spacing:-.2px;margin-bottom:8px}
+h2 .n{color:var(--gold);font-size:15px;margin-right:10px;letter-spacing:1px}
+.sub{color:var(--fg-dim);font-size:14px;margin-bottom:26px}
+
+/* ── 数字 ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.stat{
+  background:var(--bg-card);border:1px solid var(--border-soft);border-radius:12px;
+  padding:20px 18px;position:relative;overflow:hidden;
+}
+.stat::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);opacity:.35}
+.stat b{display:block;font-size:29px;font-weight:650;color:var(--gold);letter-spacing:-1px;line-height:1.15}
+.stat span{font-size:12.5px;color:var(--fg-dim)}
+
+/* ── 卡片 ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{
+  background:var(--bg-card);border:1px solid var(--border-soft);border-radius:12px;
+  padding:20px 20px 18px;transition:border-color .2s ease,background .2s ease;
+}
+.card:hover{border-color:var(--border);background:#150d07}
+.card h3{font-size:15.5px;font-weight:600;margin-bottom:10px;color:var(--gold)}
+.card p{font-size:13.5px;color:var(--fg-dim)}
+.card ul{list-style:none;font-size:13px;color:var(--fg-dim);margin-top:8px}
+.card li{padding-left:15px;position:relative;line-height:1.9}
+.card li::before{content:'·';position:absolute;left:3px;color:var(--gold-dim);font-weight:700}
+
+/* ── 表格 ── */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border-soft)}
+th{color:var(--gold-dim);font-weight:500;font-size:12.5px;letter-spacing:.6px}
+td{color:var(--fg-dim)}
+td code,.mono{font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:12.5px;color:var(--fg)}
+tr:hover td{background:rgba(255,172,2,.02)}
+
+/* ── 代码块 ── */
+pre{
+  background:#080403;border:1px solid var(--border-soft);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.85;
+  font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--fg);
+}
+pre .c{color:var(--fg-faint)}
+pre .k{color:var(--gold)}
+pre .s{color:var(--ok)}
+
+/* ── 状态标记 ── */
+.tag-ok,.tag-warn,.tag-no{
+  display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:5px;
+  letter-spacing:.4px;vertical-align:1px;
+}
+.tag-ok{color:var(--ok);background:rgba(90,196,127,.10);border:1px solid rgba(90,196,127,.22)}
+.tag-warn{color:var(--warn);background:rgba(224,166,60,.10);border:1px solid rgba(224,166,60,.22)}
+.tag-no{color:#c96a6a;background:rgba(201,106,106,.10);border:1px solid rgba(201,106,106,.22)}
+
+/* ── 诚实说明 ── */
+.honest{
+  background:linear-gradient(180deg,rgba(255,172,2,.035),transparent);
+  border:1px solid var(--border);border-radius:12px;padding:22px 24px;
+}
+.honest h3{color:var(--gold);font-size:15px;margin-bottom:12px}
+.honest li{font-size:13.5px;color:var(--fg-dim);margin-left:18px;line-height:2}
+
+footer{padding:34px 0 54px;color:var(--fg-faint);font-size:12.5px;text-align:center}
+footer .mono{color:var(--fg-faint)}
+@media(max-width:640px){
+  .hero h1{font-size:30px}
+  nav{display:none}
+  .wrap{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="ring"></div>
+    <div class="brand">Tiger.M.M<small>虎哥 · 凌霄</small></div>
+    <nav>
+      <a href="#numbers">数字</a>
+      <a href="#what">能干什么</a>
+      <a href="#start">怎么用</a>
+      <a href="#quality">自检</a>
+      <a href="#honest">边界</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>跑在 Windows 上的<br><span class="accent">本地 AI 全栈 Agent</span></h1>
+    <p class="tag">
+      两个入口（命令行 / 网页）。跨模型调度，工具按需调用，技能工作流，记忆分层。
+      不转发问题 —— 自己判断、自己动手、办不成就如实说。
+    </p>
+    <div class="meta">
+      <span class="pill">v5.0 分发版</span>
+      <span class="pill">Python 3.11</span>
+      <span class="pill plain">仅 Windows</span>
+      <span class="pill plain">零外部服务可跑（本地模型）</span>
+    </div>
+  </div>
+</div>
+
+<section id="numbers">
+  <div class="wrap">
+    <h2><span class="n">01</span>一眼看懂</h2>
+    <p class="sub">下面每个数字都是本机实数（数出来的，不是写的）。</p>
+    <div class="stats">
+      <div class="stat"><b>37</b><span>工具（tools/）</span></div>
+      <div class="stat"><b>33</b><span>安全白名单内</span></div>
+      <div class="stat"><b>26</b><span>技能（tmm_skills/）</span></div>
+      <div class="stat"><b>46</b><span>自检门禁</span></div>
+      <div class="stat"><b>917</b><span>单元测试</span></div>
+      <div class="stat"><b>946</b><span>源码文件</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="wrap">
+    <h2><span class="n">02</span>能干什么</h2>
+    <p class="sub">工具按域分组，按需加载 —— 不是把几十个工具一次性塞给模型。</p>
+    <div class="grid">
+      <div class="card">
+        <h3>文件与系统</h3>
+        <ul>
+          <li>读 / 写 / 列 / 遍历 / 搜索 / 复制 / 移动 / 重命名</li>
+          <li>系统信息、磁盘、进程</li>
+          <li>命令执行（白名单 + 安全分级）</li>
+          <li>桌面自动化（截图 / 窗口 / 点击 / 输入）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>办公文档</h3>
+        <ul>
+          <li>Word / Excel / PPT 生成与读取</li>
+          <li>表格分析、提取列、结构化统计</li>
+          <li>周报 / 日报 / 纪要 / 述职（技能化）</li>
+          <li>架构图 / 流程图（PlantUML）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>信息与网络</h3>
+        <ul>
+          <li>网页搜索、网页正文抓取</li>
+          <li>天气、地名↔坐标、翻译</li>
+          <li>浏览器操控（无头 / 有头）</li>
+          <li>GitHub 仓库 / Issue / PR</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>通信</h3>
+        <ul>
+          <li>收发邮件（SMTP / POP3，支持附件）</li>
+          <li>短信、钉钉 / 飞书 / 微信推送</li>
+          <li>ntfy 通知</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>知识与多模态</h3>
+        <ul>
+          <li>知识库导入 / 检索 / 列表（语义检索）</li>
+          <li>看图（Vision）、OCR</li>
+          <li>语音转写（Whisper）+ 播报（Edge TTS）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>自己的账</h3>
+        <ul>
+          <li>日常干活账（干成了什么 / 用了什么工具）</li>
+          <li>产物台账（今天产出了哪些文件）</li>
+          <li>模型用量与花费</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2><span class="n">03</span>怎么用</h2>
+    <p class="sub">三步：装依赖 → 填模型（或只装本地模型）→ 启动。</p>
+    <pre><span class="c"># 1. 安装（建目录 + 从模板生成 keys.json + 自检）</span>
+<span class="k">python</span> install.py
+
+<span class="c"># 2. 配模型 —— 编辑 keys.json 填一家的 Key</span>
+<span class="c">#    只想本地跑：装 Ollama 后 ollama pull qwen2.5:7b，不用填任何 Key</span>
+
+<span class="c"># 3. 启动</span>
+<span class="k">python</span> main.py          <span class="c"># 命令行</span>
+<span class="k">python</span> start_web_ui.py  <span class="c"># 网页版 → localhost:8800</span>
+
+<span class="c"># 4. 自检（一条命令跑全部门禁）</span>
+<span class="k">python</span> scripts/hermes_verify.py</pre>
+
+    <table style="margin-top:24px">
+      <tr><th>入口</th><th>文件</th><th>说明</th></tr>
+      <tr><td>命令行</td><td class="mono">main.py</td><td>终端交互</td></tr>
+      <tr><td>网页版</td><td class="mono">start_web_ui.py</td><td>浏览器界面，默认 8800</td></tr>
+      <tr><td>桌面窗口</td><td class="mono">Tiger.M.M.bat</td><td>原生窗口（pywebview）</td></tr>
+      <tr><td>数据面</td><td class="mono">open_data_ui.bat</td><td>产物 / 专家 / 审计（只读）</td></tr>
+      <tr><td>门禁</td><td class="mono">verify.bat</td><td>跑全部自检</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="quality">
+  <div class="wrap">
+    <h2><span class="n">04</span>自检与质量</h2>
+    <p class="sub">每次改动都必须跑门禁；改动即验证，没跑过的不算做完。</p>
+    <div class="grid">
+      <div class="card">
+        <h3>门禁 46 道</h3>
+        <p>覆盖路由、链条、技能、办公生成、诚实失败、静默失败、权限护栏、分发就绪、个人数据边界、多模型路由矩阵等。</p>
+      </div>
+      <div class="card">
+        <h3>单元测试 917 条</h3>
+        <p>pytest 全绿。与门禁互补：门禁盯"已知缺陷不许回退"，测试盯"函数行为"。</p>
+      </div>
+      <div class="card">
+        <h3>验证纪律</h3>
+        <p>探针必须走隔离沙箱（TMM_PROBE），绝不写用户真实数据；验证器自己也要留档可复跑。</p>
+      </div>
+    </div>
+    <pre style="margin-top:20px"><span class="c"># 全部门禁（自动发现 scripts/verification/verify_*.py）</span>
+<span class="k">python</span> scripts/hermes_verify.py
+
+<span class="c"># 单跑某一道</span>
+<span class="k">python</span> scripts/verification/verify_route_registry.py</pre>
+  </div>
+</section>
+
+<section id="honest">
+  <div class="wrap">
+    <h2><span class="n">05</span>边界与诚实说明</h2>
+    <p class="sub">拿过去能不能跑、缺什么会怎样 —— 先说清，不假装。</p>
+    <div class="honest">
+      <h3>已知限制</h3>
+      <ul>
+        <li><b>平台</b>：仅 Windows（桌面自动化、win32 输入、系统语音都依赖 Win32）。</li>
+        <li><b>模型</b>：至少要有一家 —— 云端 Key（deepseek / mimo / qwen）或本地 Ollama。</li>
+        <li><b>部分工具需自备服务</b>：邮件（163 授权码）、短信（腾讯云）、推送（ntfy / Server酱）。<b>没配会如实报"没配置"，不会假装成功。</b></li>
+        <li><b>凭据位置</b>：全部在 <span class="mono">keys.json</span>（不进 git）；模板见 <span class="mono">keys_template.json</span>。</li>
+        <li><b>数据边界</b>：对话史 / 备份 / 日志都在 <span class="mono">data/ logs/ backups/</span>，随包不携带个人数据。</li>
+      </ul>
+    </div>
+    <div class="honest" style="margin-top:16px">
+      <h3>它不会做的事</h3>
+      <ul>
+        <li>不删系统文件、不改密码、不代做决定。</li>
+        <li>办不成不会包装成办成了 —— 失败就说失败，缺什么就报什么。</li>
+        <li>验证流量绝不写用户真实数据（硬闸 + 路径隔离双保险）。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Tiger.M.M · 虎哥 · 凌霄 &nbsp;|&nbsp; 模型是兵，Agent 是将，人是帅</div>
+    <div class="mono" style="margin-top:8px">分发版样板 · 数字取自本机实数 · 生成于 2026-09-24</div>
+  </div>
+</footer>
+
+</body>
+</html>

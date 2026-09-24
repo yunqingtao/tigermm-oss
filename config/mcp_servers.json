@@ -1,0 +1,13 @@
+{
+  "_comment": "MCP 外部服务器配置。TMM 启动时自动发现其工具并合并进模型工具列表。没用外部服务器时保持 servers 为空 [] —— 非空时每次启动都会真的起一个子进程。",
+  "_archived_test_server": {
+    "_note": "2026-09-20 归档: 原来的测试服务器(提供 echo/add/list_dir 三个假工具)已从 servers 移出, 因为 pipeline 每次启动都会白起一个 python 进程。要再用(或跑 verify_mcp_reap 之外的手工验证)把下面这条贴回 servers 数组即可; _test_mcp_server.py 仍在项目根, 未删。",
+    "name": "test",
+    "transport": "stdio",
+    "command": "python",
+    "args": [
+      "_test_mcp_server.py"
+    ]
+  },
+  "servers": []
+}

@@ -1,0 +1,64 @@
+# Tiger.M.M (TMM) 依赖清单 — 2026-09-20
+# ============================================================================
+# 生成方式: 扫全部 .py 的顶层 import → importlib.metadata 映射到**本机实际安装的
+#           发行版+版本** (不是抄清单、不是猜包名)。版本为实测值 (=="钉死")。
+#
+# 装法:
+#   python -m pip install -r requirements.txt
+# 装完先跑全门禁:  verify.bat      (22+ 门, ~10 分钟, 全绿才算装对)
+#
+# 三条规矩 (踩过坑才写):
+#   ① 缺一个库不该让整个能力消失 —— 代码里已按"兜底链"写 (截图 pyautogui→Pillow→win32;
+#      播放 playsound→pygame→SAPI)。所以下面"可选增强"里的东西**不装也能跑**。
+#   ② 不要靠预生成的缓存 —— comtypes 的 UIAutomation gen 缓存会因 Windows 更新/
+#      Python 升级/comtypes 换版失效, 代码已在 import 处现场再生 (tools/windows_desktop.py)。
+#   ③ 装了不用的别留 —— 本清单只收"源码真的 import 了"的包 (例: pandas 装了但没人用, 不收)。
+# ============================================================================
+
+# ── 运行必需 (源码直接 import, 缺了对应功能直接瘫) ───────────────────────────
+aiohttp==3.13.5            # 异步 HTTP (web 抓取/relay)
+comtypes==1.4.16           # UIAutomation (窗口/元素/点击) —— 桌面控制的地基
+cryptography==50.0.0       # keys 加密 / 通信加密
+ddgs==9.16.0               # web_search 后端
+edge-tts==7.2.8            # 本地播报 speak-aloud 的音色来源 (自然音色)
+fastapi==0.141.1           # Web UI (8800) 与 api/
+Flask==3.1.3               # 部分移动端/旧接口
+matplotlib==3.10.8         # chart 工具出图
+numpy==2.4.4               # 数值
+openpyxl==3.1.5            # Excel 读写
+pillow==12.2.0             # 截图兜底 (ImageGrab) / 图片处理 / 图表
+psutil==7.2.2              # 进程与系统信息 (system_info)
+pydantic==2.13.0           # 数据模型校验
+pygame==2.6.1              # 音频播放兜底 (playsound 不在时的主力) → 播报音色靠它
+pypdf==6.10.0              # PDF 文本提取 (pdf-extract)
+pytesseract==0.3.13        # OCR (需系统装 Tesseract)
+python-docx==1.2.0         # Word 读写
+python-dotenv==1.2.2       # .env 读取
+python-pptx==1.0.2         # PPT 读写
+pywebview==6.2.1           # 桌面壳 (可选 UI 形态)
+pywin32==311               # Win32 API: 截图 BitBlt / SAPI 兜底 / 通知 / 录音控制
+PyYAML==6.0.3              # 技能 frontmatter 解析
+rich==15.0.0               # CLI 渲染
+starlette==1.6.0           # fastapi 底座
+trafilatura==2.2.0         # 网页正文提取 (summarize-web)
+uvicorn==0.52.3            # ASGI 服务器 (Web UI)
+websocket-client==1.9.0    # TMM Link / relay 客户端
+websockets==17.0.1         # WebSocket 服务端 (relay / web_ui)
+
+# ── 测试 / 门禁必需 ────────────────────────────────────────────────────────
+pytest==9.1.1              # canonical 套件 (tests/)
+pytest-asyncio==1.4.0      # ★ async 用例靠它; 缺了会有 8 条假红 "not natively supported"
+
+# ── 可选增强 (装了功能更全, 不装也有兜底或走别的路) ────────────────────────
+# pyautogui              截图首选 (缺 → 自动退 Pillow ImageGrab / win32 BitBlt)
+# playsound              音频播放首选 (缺 → 自动退 pygame.mixer)
+# sounddevice,soundfile  录音 (voice record) —— 不装只是不能录
+# openai-whisper         转写 (transcribe-audio / video-summarize) —— 不装转写不可用;
+#                         也可换 faster-whisper (更快, 代码兼容)
+# playwright             浏览器自动化 (tools/browser.py 深水区) —— 需另装浏览器
+# jieba                  中文分词 (memory_long) —— 不装退简单切分
+# win10toast             桌面通知 (desktop_notify) —— 不装退 im_notify
+# waitress               生产 WSGI 服务器 (web_chat.py) —— 不装用 Flask 自带的
+# tencentcloud           短信 (sms_send) —— 不装短信不可用
+# PyPDF2,pdfplumber      PDF 老后端 (tiger_office 会按顺序试) —— 有 pypdf 就不需要
+# chromadb               知识库向量检索 —— 不装走 JSONL 关键词检索

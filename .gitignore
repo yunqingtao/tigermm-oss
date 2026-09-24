@@ -1,0 +1,82 @@
+# ═══════════════════════════════════════════════
+# Tiger.M.M — 不该进版本库的东西
+# 2026-09-18: 此前**没有 .gitignore** -> keys.json(真实API密钥)/用户状态/
+# 备份/日志/截图 全部被 git 跟踪。本文件 + `git rm --cached` 修正。
+# 注意: 忽略≠删除 —— 文件仍在磁盘上正常工作。
+# ═══════════════════════════════════════════════
+
+# ── 1. 密钥 (最重要) ──
+keys.json
+keys.json.bak
+# ★ 2026-09-20 (分发版第一刀): 同名变体也在仓库里! keys(LAPTOP-xxx).json 曾**未被忽略**,
+#   relay_tokens(.json / (LAPTOP-xxx).json) 同样被跟踪 —— 里面是真 token。
+#   模板留口子 (! 取反) 以便分发时把 keys_template.json 带出去。
+keys*.json
+keys.json.bak_*
+relay_tokens*.json
+!keys_template.json
+*.enc
+# ★ 2026-09-25: **分发包不带凭据密文** —— secrets.enc 曾被 `!secrets.enc` 例外放进来,
+#   等于在公开仓摆一个可离线爆破的凭据包。开发仓(私有)仍以密文形态保留它。
+.crypto.key
+data/*.enc
+*.key
+# 口令文件绝不进仓库 (它在仓库外, 这条是双保险)
+secrets-passphrase*
+
+# ── 2. 用户私有数据 / 状态 ──
+data/chat_sessions.db
+data/chat_sessions.db-*
+data/prefs.json
+data/user_profile.md
+data/project_memory.md
+data/perception.json
+data/task_context.json
+data/environment.json
+data/screenshots/
+data/debug/last_system_prompt.txt
+data/inbox.json
+data/inbox/
+
+# ── 3. 运行产物 / 日志 ──
+*.log
+data/logs/
+data/tmm_output.log
+data/crash_log.txt
+data/startup_log.txt
+data/rebuild_log*.txt
+data/_wf_debug.txt
+bot*.log
+tmm_output.log
+web_ui.out.log
+
+# ── 4. 测试 / 调试遗留 ──
+data/test_*.txt
+data/nl_test_*.json
+data/code_pool/
+tmp/
+*.hermesbak
+*.vfybak
+
+# ── 5. 备份 / 打包产物 (本地保留, 不进库) ──
+backups/
+*.zip
+*.tar.gz
+
+# ── 6. Python / 工具缓存 ──
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# ── 7. 编辑器 / 系统 ──
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,119 @@
+{
+ "what": "留出集 (不参与调参, 用于检测过拟合)",
+ "cases": [
+  {
+   "msg": "看下内存和CPU，然后写份体检结论存到桌面",
+   "expect": "plan",
+   "note": "两查询+落盘"
+  },
+  {
+   "msg": "读一下配置文件和日志，找出不一致的地方，整理成一份说明",
+   "expect": "plan",
+   "note": "两查询+整理"
+  },
+  {
+   "msg": "统计一下这个月的用量，再看看哪几天最高，写成一份小结",
+   "expect": "plan",
+   "note": "两查询+整理"
+  },
+  {
+   "msg": "把这两张表都读出来，对比一下差异，存成一份对照",
+   "expect": "plan",
+   "note": "两查询+落盘"
+  },
+  {
+   "msg": "先查服务状态，再翻最近的错误日志，然后给个排查结论",
+   "expect": "plan",
+   "note": "两查询+汇总"
+  },
+  {
+   "msg": "列出所有大文件，算一下总共占多少，存成清单",
+   "expect": "plan",
+   "note": "两查询+落盘"
+  },
+  {
+   "msg": "看看网络通不通，再测一下速度，写成一份记录",
+   "expect": "plan",
+   "note": "两查询+落盘"
+  },
+  {
+   "msg": "先提取这个PDF的要点，再翻成英文，存到桌面",
+   "expect": "plan",
+   "note": "查询+生成+落盘"
+  },
+  {
+   "msg": "电脑体检",
+   "expect": "skill",
+   "note": "pc-checkup 触发词"
+  },
+  {
+   "msg": "端口检查",
+   "expect": "skill",
+   "note": "healthcheck 触发词"
+  },
+  {
+   "msg": "收件箱有哪些重要的",
+   "expect": "skill",
+   "note": "inbox-triage 触发词"
+  },
+  {
+   "msg": "用了多少token",
+   "expect": "skill",
+   "note": "model-usage 触发词"
+  },
+  {
+   "msg": "我要写简历",
+   "expect": "skill",
+   "note": "write-resume 触发词/子串"
+  },
+  {
+   "msg": "做个PPT",
+   "expect": "skill",
+   "note": "make-slides 触发词"
+  },
+  {
+   "msg": "视频摘要",
+   "expect": "skill",
+   "note": "video-summarize 触发词"
+  },
+  {
+   "msg": "看看这个目录",
+   "expect": "single",
+   "note": "单步看"
+  },
+  {
+   "msg": "帮我看下这份材料",
+   "expect": "single",
+   "note": "泛化请求"
+  },
+  {
+   "msg": "现在几点",
+   "expect": "single",
+   "note": "闲聊"
+  },
+  {
+   "msg": "先别写，我再想想",
+   "expect": "single",
+   "note": "否定/犹豫"
+  },
+  {
+   "msg": "直接做，先写背景再写方案",
+   "expect": "skill",
+   "note": "豁免前缀(跳过**规划**) → 技能直接干 ｜ ★标签修订 2026-09-22: 原标 single 有争议, '直接做'意为跳过规划链, 不是禁止技能"
+  },
+  {
+   "msg": "硬盘满了怎么办",
+   "expect": "single",
+   "note": "咨询类"
+  }
+ ],
+ "revisions": [
+  {
+   "at": "2026-09-22",
+   "case": "直接做，先写背景再写方案",
+   "from": "single",
+   "to": "skill",
+   "why": "'直接做'=跳过规划链; 技能一步完成正是'直接做'的行为, 不是错误路由"
+  }
+ ]
+}

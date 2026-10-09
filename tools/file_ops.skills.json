@@ -1,0 +1,146 @@
+{
+  "读文件": {
+    "patterns": [
+      "读文件",
+      "读",
+      "读取",
+      "查看文件",
+      "cat"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "action": {
+        "type": "fixed",
+        "value": "read"
+      }
+    }
+  },
+  "写文件": {
+    "patterns": [
+      "写",
+      "写入",
+      "写一行",
+      "创建文件"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "content": {
+        "type": "string"
+      }
+    },
+    "action": "write",
+    "extract": {
+      "content": {
+        "mode": "after_keyword",
+        "strip_leading": [
+          "一个",
+          "一段",
+          "一篇",
+          "一份",
+          "个",
+          "条",
+          "句"
+        ],
+        "strip_tail": [
+          "保存到",
+          "存到",
+          "写入到",
+          "放到",
+          "到桌面",
+          "到文档",
+          "到下载",
+          "到"
+        ]
+      }
+    }
+  },
+  "列目录": {
+    "patterns": [
+      "列目录",
+      "列出",
+      "ls",
+      "dir",
+      "看看目录"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "action": {
+        "type": "fixed",
+        "value": "list"
+      }
+    }
+  },
+  "删除文件": {
+    "patterns": [
+      "删除",
+      "删掉",
+      "移除",
+      "rm"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      }
+    }
+  },
+  "复制文件": {
+    "patterns": [
+      "复制",
+      "拷贝",
+      "copy",
+      "cp"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "dest": {
+        "type": "path"
+      }
+    }
+  },
+  "移动文件": {
+    "patterns": [
+      "移动",
+      "挪",
+      "move",
+      "mv"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "dest": {
+        "type": "path"
+      }
+    }
+  },
+  "重命名": {
+    "patterns": [
+      "重命名",
+      "改名",
+      "rename"
+    ],
+    "tool": "file_ops",
+    "params": {
+      "path": {
+        "type": "path"
+      },
+      "dest": {
+        "type": "path"
+      }
+    }
+  }
+}

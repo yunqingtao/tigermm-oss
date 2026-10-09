@@ -1,0 +1,65 @@
+{
+  "_说明": "至少填一家就能跑。**哪一行填了什么 url, 就用哪家** —— 厂商由 url 决定, 不由 Key 长相决定。填完双击 check_keys.bat 验一遍。",
+  "_不想花钱": "装本地 Ollama 即可，不用填任何 Key（下面 ollama 那段已经配好了）。",
+  "_怎么加新家": "任何 OpenAI 兼容 (/v1/chat/completions) 的服务都能用：复制一段、改名字、填 key 和 url 即可。内置认得的家见 core/provider_catalog.py。",
+  "_验Key": "填完双击 check_keys.bat —— 逐个真连一次，中文告诉你「哪家可用 / 哪家不行 / 该改哪儿」，不会回显你的 Key。",
+  "deepseek": {
+    "key": "sk-把你的key填这里",
+    "url": "https://api.deepseek.com",
+    "model": "deepseek-chat",
+    "_拿Key": "platform.deepseek.com → API Keys"
+  },
+  "mimo": {
+    "key": "",
+    "url": "https://api.xiaomimimo.com/v1",
+    "model": "mimo-v2.5",
+    "_拿Key": "api.xiaomimimo.com → 控制台"
+  },
+  "ollama": {
+    "key": "ollama",
+    "url": "http://127.0.0.1:11434/v1",
+    "model": "qwen2.5:7b",
+    "_不需要Key": "本地模型零成本。装了 Ollama 就能跑；模型不在本机时 check_keys 会告诉你 ollama pull 哪一条。"
+  },
+  "qwen": {
+    "key": "",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.7-flash",
+    "_拿Key": "bailian.console.aliyun.com → API-KEY"
+  },
+  "openai": {
+    "key": "",
+    "url": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini",
+    "_拿Key": "platform.openai.com → API keys"
+  },
+  "moonshot": {
+    "key": "",
+    "url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k2-0905-preview",
+    "_拿Key": "platform.moonshot.cn → API Key 管理"
+  },
+  "zhipu": {
+    "key": "",
+    "url": "https://open.bigmodel.cn/api/paas/v4",
+    "model": "glm-4-flash",
+    "_拿Key": "open.bigmodel.cn → API Keys"
+  },
+  "siliconflow": {
+    "key": "",
+    "url": "https://api.siliconflow.cn/v1",
+    "model": "deepseek-ai/DeepSeek-V3",
+    "_拿Key": "cloud.siliconflow.cn → API 密钥"
+  },
+  "openrouter": {
+    "key": "",
+    "url": "https://openrouter.ai/api/v1",
+    "model": "deepseek/deepseek-chat",
+    "_拿Key": "openrouter.ai/keys"
+  },
+  "notify": {
+    "serverchan": "",
+    "pushplus": "",
+    "_说明": "可选: 微信推送。serverchan 填 Server酱 SendKey (https://sct.ftqq.com 微信扫码获取); 也可以不填 —— 不填则 push_notify 工具诚实报错，其他功能不受影响。"
+  }
+}

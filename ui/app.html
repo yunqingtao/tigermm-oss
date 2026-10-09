@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiger.M.M · 星港驾驶舱</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0502; --bg2:#0d0803; --gold:#FFAC02; --gold-d:#c8860a;
+  --fg:#cfc7bb; --dim:#5a5147; --dim2:#847a6c;
+  --card:rgba(255,172,2,.045); --card2:rgba(255,172,2,.075);
+  --border:rgba(255,172,2,.13); --border-s:rgba(255,172,2,.07);
+  --ok:#8fbf72; --bad:#d0674f;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:16px/1.62 'Microsoft YaHei','Segoe UI',sans-serif;
+     display:flex;overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ═══ 左栏 ═══ */
+#rail{width:270px;min-width:270px;background:var(--bg2);border-right:1px solid var(--border-s);
+      display:flex;flex-direction:column;padding:16px 14px;gap:2px;overflow-y:auto}
+#brand{font-size:1.12em;color:var(--gold);font-weight:700;letter-spacing:2.5px}
+#brand-sub{font-size:.7em;color:var(--dim);letter-spacing:1.4px;margin:3px 0 16px}
+.blk{margin-bottom:16px}
+.blk-t{font-size:.68em;color:var(--dim);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+
+/* 模式卡 (左栏) */
+.mode-card{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;
+           border:1px solid transparent;transition:.15s;margin-bottom:5px}
+.mode-card:hover{background:var(--card)}
+.mode-card.on{background:var(--card2);border-color:var(--border)}
+.mode-ic{width:24px;height:24px;min-width:24px;border-radius:5px;background:var(--card);
+         border:1px solid var(--border-s);display:flex;align-items:center;justify-content:center;
+         font-size:.85em;color:var(--dim2)}
+.mode-card.on .mode-ic{background:var(--gold);color:#0a0502;border-color:var(--gold);font-weight:bold}
+.mode-nm{font-size:.9em;color:var(--dim2);letter-spacing:.5px}
+.mode-card.on .mode-nm{color:var(--gold)}
+.mode-ds{font-size:.73em;color:var(--dim);margin-top:1px}
+.mode-body{min-width:0}
+
+/* 模型 */
+#models{display:flex;gap:5px;flex-wrap:wrap}
+#models button{background:transparent;border:1px solid var(--border-s);color:var(--dim);
+               padding:4px 11px;border-radius:5px;cursor:pointer;font-size:.78em;transition:.15s;font-family:inherit}
+#models button:hover{color:var(--gold);border-color:var(--border)}
+#models button.on{color:var(--gold);border-color:var(--gold);background:var(--card)}
+
+/* 统计 */
+.srow{display:flex;justify-content:space-between;font-size:.8em;color:var(--dim);padding:2px 0}
+.srow b{color:var(--dim2);font-weight:normal}
+
+/* 待审批 */
+#inbox{font-size:.8em}
+.ib{background:var(--card);border:1px solid var(--border-s);border-radius:6px;padding:8px 9px;margin-bottom:7px}
+.ib-t{color:var(--gold);font-size:.88em;margin-bottom:3px}
+.ib-b{color:var(--dim2);font-size:.8em;white-space:pre-wrap;word-break:break-all;max-height:78px;overflow:auto;margin-bottom:6px}
+.ib-a{display:flex;gap:5px}
+.ib-a button{flex:1;background:var(--card);border:1px solid var(--border-s);color:var(--gold);
+             padding:4px 0;border-radius:4px;cursor:pointer;font-size:.8em;font-family:inherit}
+.ib-a button:hover{background:var(--card2)}
+.ib-a button.no{color:var(--bad);border-color:rgba(208,103,79,.28)}
+.empty{color:var(--dim);font-size:.8em;text-align:center;padding:5px 0}
+
+/* ═══ 主区 ═══ */
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#top{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--border-s);
+     background:var(--bg);font-size:.8em;color:var(--dim);letter-spacing:.4px}
+#top .pill{padding:3px 10px;border-radius:20px;border:1px solid var(--border);
+           color:var(--gold);background:var(--card);font-size:1em;letter-spacing:.8px}
+#top .sp{flex:1}
+#top b{color:var(--dim2);font-weight:normal}
+#top button{background:transparent;border:1px solid var(--border-s);color:var(--dim);padding:3px 12px;
+            border-radius:5px;cursor:pointer;font-size:1em;font-family:inherit}
+#top button:hover{color:var(--gold);border-color:var(--border)}
+
+#stream{flex:1;overflow-y:auto;padding:22px 26px 8px}
+#stream::-webkit-scrollbar{width:8px}
+#stream::-webkit-scrollbar-thumb{background:rgba(255,172,2,.14);border-radius:4px}
+
+/* 欢迎页 */
+#welcome{max-width:720px;margin:6vh auto 0;text-align:center}
+#w-title{color:var(--gold);font-size:1.56em;letter-spacing:3px;font-weight:700}
+#w-sub{color:var(--dim);font-size:.86em;margin:8px 0 30px;letter-spacing:1px}
+#w-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wc{border:1px solid var(--border-s);border-radius:10px;padding:16px 14px;background:var(--card);
+    cursor:pointer;transition:.18s;text-align:left}
+.wc:hover{border-color:var(--border);background:var(--card2);transform:translateY(-2px)}
+.wc-i{font-size:1.3em;color:var(--gold);margin-bottom:7px}
+.wc-t{color:var(--gold);font-size:.96em;letter-spacing:1px;margin-bottom:5px}
+.wc-d{color:var(--dim);font-size:.79em;line-height:1.6}
+.wc-x{color:var(--dim2);font-size:.75em;margin-top:8px;border-top:1px dashed var(--border-s);padding-top:7px}
+
+/* 消息 */
+.msg{max-width:82%;margin:14px 0;display:flex;flex-direction:column}
+.msg.u{align-self:flex-end;margin-left:auto;align-items:flex-end}
+.msg.a{align-items:flex-start}
+.bub{padding:10px 14px;border-radius:11px;white-space:pre-wrap;word-break:break-word;font-size:1em}
+.u .bub{background:var(--card2);border:1px solid var(--border);border-bottom-right-radius:3px}
+.a .bub{background:var(--bg2);border:1px solid var(--border-s);border-bottom-left-radius:3px}
+.meta{font-size:.71em;color:var(--dim);margin-bottom:5px;letter-spacing:.6px;display:flex;gap:8px;align-items:center}
+.badge{font-size:.98em;padding:1px 7px;border-radius:9px;border:1px solid var(--border)}
+.badge.ask{color:var(--dim2);border-color:var(--border-s)}
+.badge.plan{color:var(--gold-d);border-color:rgba(200,134,10,.3)}
+.badge.craft{color:var(--gold);border-color:var(--border)}
+.thinking{color:var(--dim);font-size:.9em}
+.thinking:after{content:'';animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+/* 执行步骤面板 */
+.steps{margin-top:9px;border:1px solid var(--border-s);border-radius:9px;overflow:hidden;background:rgba(0,0,0,.25)}
+.steps-h{padding:8px 13px;font-size:.79em;color:var(--dim2);letter-spacing:1px;cursor:pointer;
+         background:var(--card);display:flex;justify-content:space-between;align-items:center}
+.steps-h:hover{color:var(--gold)}
+.steps-b{padding:4px 0}
+.st{padding:8px 13px;border-top:1px dashed var(--border-s);font-size:.85em}
+.st-t{display:flex;gap:8px;align-items:center;color:var(--dim2)}
+.st-n{color:var(--gold-d);min-width:18px}
+.st-tool{color:var(--fg)}
+.st-s{font-size:.94em}
+.st-s.ok{color:var(--ok)} .st-s.bad{color:var(--bad)}
+.st-args{color:var(--dim);font-size:.96em;margin:3px 0 0 26px;white-space:pre-wrap;word-break:break-all}
+.st-res{color:var(--dim2);font-size:.96em;margin:2px 0 0 26px;white-space:pre-wrap;word-break:break-all;max-height:90px;overflow:auto}
+
+/* 方案确认卡 */
+.plan{margin-top:10px;border:1px solid var(--border);border-radius:10px;background:var(--card);overflow:hidden}
+.plan-h{padding:8px 13px;background:rgba(255,172,2,.09);color:var(--gold);font-size:.83em;letter-spacing:1.4px;
+        display:flex;justify-content:space-between}
+.plan-b{padding:11px 14px;font-size:.91em;white-space:pre-wrap;color:var(--fg)}
+.plan-a{display:flex;gap:8px;padding:0 13px 12px}
+.plan-a button{flex:1;padding:9px 0;border-radius:7px;cursor:pointer;font-size:.91em;
+               font-family:inherit;letter-spacing:1px;border:1px solid transparent;transition:.15s}
+.plan-a .go{background:var(--gold);color:#0a0502;font-weight:bold}
+.plan-a .go:hover{opacity:.85}
+.plan-a .no{background:transparent;border-color:var(--border);color:var(--dim2)}
+.plan-a .no:hover{color:var(--bad);border-color:rgba(208,103,79,.3)}
+
+/* ═══ 输入区 ═══ */
+#composer{padding:12px 20px 16px;border-top:1px solid var(--border-s);background:var(--bg)}
+#seg{display:flex;gap:4px;margin-bottom:9px}
+#seg button{background:transparent;border:1px solid var(--border-s);color:var(--dim);padding:5px 15px;
+            border-radius:7px;cursor:pointer;font-size:.84em;font-family:inherit;letter-spacing:1.2px;transition:.15s}
+#seg button:hover{color:var(--gold);border-color:var(--border)}
+#seg button.on{background:var(--card2);border-color:var(--gold);color:var(--gold)}
+#seg .hint{margin-left:auto;font-size:.75em;color:var(--dim);align-self:center}
+#frm{display:flex;gap:10px;align-items:flex-end}
+#ta{flex:1;background:var(--bg2);color:var(--fg);border:1px solid var(--border-s);padding:11px 14px;
+    border-radius:9px;font-size:1em;outline:none;resize:none;font-family:inherit;line-height:1.55;
+    max-height:170px;min-height:44px}
+#ta:focus{border-color:var(--border)}
+#go{background:var(--gold);color:#0a0502;border:none;padding:12px 26px;border-radius:9px;cursor:pointer;
+    font-weight:bold;font-size:.95em;letter-spacing:2px;font-family:inherit}
+#go:hover{opacity:.86}
+#go:disabled{opacity:.35;cursor:default}
+.msg img{max-width:100%;border-radius:7px;border:1px solid var(--border-s);margin:5px 0}
+@media(max-width:900px){#rail{display:none}#w-cards{grid-template-columns:1fr}}
+
+/* ══════════ 设置模型（2026-10-09 加：点着配，不用手改 json）══════════════
+   ★ 类名避让: 本页已有全局 .msg / .hint / .ok / .bad —— 卡片里的说明行用 .pmsg、
+     提示行用 .su-hint，别复用那俩（复用会被全局样式改成 flex 列 + max-width 82%）。 */
+#setup{position:fixed;inset:0;background:rgba(10,5,2,.90);z-index:90;display:none;overflow-y:auto;padding:30px 16px}
+#setup.on{display:block}
+.setup-box{max-width:790px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 26px;box-shadow:0 24px 70px rgba(0,0,0,.7)}
+.setup-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.setup-title{font-size:1.06em;color:var(--gold);letter-spacing:1.5px}
+.setup-x{background:none;border:none;color:var(--dim);font-size:1.3em;line-height:1;cursor:pointer;font-family:inherit}
+.setup-x:hover{color:var(--gold)}
+.setup-sub{font-size:.8em;color:var(--dim2);line-height:1.85;margin-bottom:4px}
+.setup-sub b{color:var(--gold)}
+.su-flash{font-size:.8em;line-height:1.75;margin:0 0 10px}
+.su-flash.good{color:var(--ok)}
+.su-flash.bad{color:var(--bad)}
+.grp{font-size:.68em;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px}
+.pcard{background:var(--card);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;margin-bottom:9px}
+.pcard.ok{border-color:rgba(143,191,114,.45)}
+.pcard .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px}
+.pcard .nm{font-size:.86em;color:var(--fg);line-height:1.6}
+.pcard .nm i{font-style:normal;display:block;color:var(--dim);font-size:.8em;margin-top:2px}
+.pcard .nm i.bad{color:var(--bad)}
+.chip{font-size:.72em;padding:2px 9px;border-radius:20px;border:1px solid var(--border-s);color:var(--dim2);white-space:nowrap;flex-shrink:0}
+.chip.ok{color:var(--ok);border-color:rgba(143,191,114,.45)}
+.chip.none{color:var(--dim)}
+.chip.wait{color:var(--gold);border-color:var(--border)}
+.pcard .flds{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pcard .f-key{grid-column:1/-1}
+.pcard input,.pcard select{background:rgba(0,0,0,.35);border:1px solid var(--border-s);color:var(--fg);border-radius:6px;padding:7px 10px;font-size:.82em;font-family:inherit;width:100%;box-sizing:border-box}
+.pcard input::placeholder{color:var(--dim)}
+.pcard input:focus,.pcard select:focus{outline:none;border-color:var(--border)}
+.pcard .acts{display:flex;gap:7px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.pcard button{background:transparent;border:1px solid var(--border);color:var(--gold);border-radius:6px;padding:5px 14px;font-size:.8em;cursor:pointer;font-family:inherit}
+.pcard button:hover{background:var(--card2)}
+.pcard button:disabled{opacity:.45;cursor:default}
+.pcard .pmsg{font-size:.8em;color:var(--dim2);line-height:1.75;margin-top:9px;white-space:pre-wrap;word-break:break-word}
+.pcard .pmsg.good{color:var(--ok)}
+.pcard .pmsg.bad{color:var(--bad)}
+.pcard pre{background:rgba(0,0,0,.4);border:1px solid var(--border-s);border-radius:6px;padding:8px 10px;font-size:.72em;color:var(--dim2);max-height:160px;overflow:auto;margin:8px 0 0;white-space:pre-wrap;word-break:break-all}
+.su-hint{font-size:.76em;color:var(--dim);line-height:1.8;margin-top:14px}
+.side-gear{background:transparent;border:1px solid var(--border-s);color:var(--dim);border-radius:5px;padding:2px 8px;font-size:.72em;cursor:pointer;font-family:inherit;float:right;letter-spacing:1px}
+.side-gear:hover{color:var(--gold);border-color:var(--border)}
+.side-gear.attn{color:var(--gold);border-color:var(--border);background:var(--card2)}
+</style>
+</head>
+<body>
+
+<div id="rail">
+  <div id="brand">TIGER.M.M</div>
+  <div id="brand-sub">星港驾驶舱 · MARY III</div>
+
+  <div class="blk">
+    <div class="blk-t">运行模式</div>
+    <div id="modeList"></div>
+  </div>
+
+  <div class="blk">
+    <div class="blk-t">模型<button class="side-gear" id="open-setup">设置</button></div>
+    <div id="models">
+      <button data-m="auto" class="on">auto</button>
+      <button data-m="deepseek">deepseek</button>
+      <button data-m="mimo">mimo</button>
+      <button data-m="ollama">ollama</button>
+    </div>
+  </div>
+
+  <div class="blk">
+    <div class="blk-t">状态</div>
+    <div id="stats"><div class="srow"><span>加载中</span></div></div>
+  </div>
+
+  <div class="blk" style="flex:1;min-height:0;display:flex;flex-direction:column">
+    <div class="blk-t">待审批</div>
+    <div id="inbox" style="overflow-y:auto;min-height:0"><div class="empty">无待审批</div></div>
+  </div>
+</div>
+
+<div id="main">
+  <div id="top">
+    <span class="pill" id="tMode">实干</span>
+    <span id="tInfo">直接执行文件 / 系统操作</span>
+    <span class="sp"></span>
+    <b id="tStat">连接中…</b>
+    <button onclick="clearChat()">清空会话</button>
+  </div>
+
+  <div id="stream"></div>
+
+  <div id="composer">
+    <div id="seg">
+      <button data-mode="ask">问答</button>
+      <button data-mode="plan">规划</button>
+      <button data-mode="craft" class="on">实干</button>
+      <span class="hint" id="segHint">实干模式：说一句，虎哥直接动手</span>
+    </div>
+    <div id="frm">
+      <textarea id="ta" rows="1" placeholder="直接说，虎哥干活…   (Enter 发送 / Shift+Enter 换行)" autofocus></textarea>
+      <button id="go">发送</button>
+    </div>
+  </div>
+</div>
+
+<div id="setup">
+  <div class="setup-box">
+    <div class="setup-head">
+      <div class="setup-title">设置模型</div>
+      <button class="setup-x" id="setup-close" title="关闭">×</button>
+    </div>
+    <div class="setup-sub" id="setup-sub">读配置…</div>
+    <div id="setup-body"></div>
+  </div>
+</div>
+
+<script>
+const stream=document.getElementById('stream'), ta=document.getElementById('ta'),
+      go=document.getElementById('go'), tStat=document.getElementById('tStat'),
+      tMode=document.getElementById('tMode'), tInfo=document.getElementById('tInfo'),
+      segHint=document.getElementById('segHint');
+
+let model='auto', mode='craft', MODES={}, MODE_ORDER=['ask','plan','craft'], busy=false, statInit=true;
+
+const HINTS={ask:'问答模式：只回答，不动手', plan:'规划模式：先出方案，确认后执行',
+             craft:'实干模式：说一句，虎哥直接动手'};
+const ICONS={ask:'?', plan:'☰', craft:'▶'};
+
+/* ── 模式 ── */
+function paintModes(){
+  const ml=document.getElementById('modeList');
+  ml.innerHTML='';
+  MODE_ORDER.forEach(k=>{
+    const v=MODES[k]||{cn:k,desc:''};
+    const d=document.createElement('div');
+    d.className='mode-card'+(k===mode?' on':'');
+    d.onclick=()=>setMode(k);
+    d.innerHTML='<div class="mode-ic">'+(ICONS[k]||'·')+'</div>'+
+      '<div class="mode-body"><div class="mode-nm">'+esc(v.cn||k)+
+      '</div><div class="mode-ds">'+esc(v.desc||'')+'</div></div>';
+    ml.appendChild(d);
+  });
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode));
+  const info=MODES[mode]||{cn:mode,desc:''};
+  tMode.textContent=info.cn||mode;
+  tInfo.textContent=info.desc||'';
+  segHint.textContent=HINTS[mode]||'';
+}
+async function loadModes(){
+  try{
+    const r=await fetch('/modes'), d=await r.json();
+    MODES=d.modes||{}; MODE_ORDER=d.order||MODE_ORDER; mode=d.current||'craft';
+  }catch(e){}
+  paintModes();
+}
+async function setMode(m){
+  if(m===mode)return;
+  mode=m; paintModes();
+  try{
+    const r=await fetch('/mode',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({mode:m})});
+    const d=await r.json();
+    if(d.ok){ MODES=Object.assign({},MODES); }
+  }catch(e){}
+  const info=MODES[mode]||{cn:mode,desc:''};
+  addSys('已切到 '+(info.cn||mode)+' 模式 — '+(info.desc||''));
+}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+
+/* ── 模型 ── */
+function paintModel(){
+  document.querySelectorAll('#models button').forEach(b=>b.classList.toggle('on',b.dataset.m===model));
+}
+document.querySelectorAll('#models button').forEach(b=>b.onclick=()=>{model=b.dataset.m;paintModel()});
+paintModel();
+
+/* ── 输入 ── */
+function grow(){ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,170)+'px'}
+ta.addEventListener('input',grow);
+ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend()}};
+// ★ 2026-09-19 修 (真缺陷): 原来直接 `go.onclick=doSend` → 浏览器把**点击事件对象**
+//   当第一个参数传进去, doSend(forced) 里 forced!==undefined 成立 → forced.trim() 抛
+//   TypeError → **点「发送」按钮完全没反应** (只有敲 Enter 能发)。
+//   实测依据: 用浏览器点按钮, 输入框内容原封不动、消息没进列表。
+go.onclick=()=>doSend();
+
+function addSys(t){
+  const d=document.createElement('div');
+  d.className='msg a';
+  d.innerHTML='<div class="meta"><span class="badge ask">系统</span></div><div class="bub" style="color:#847a6c;font-size:.82em">'+esc(t)+'</div>';
+  stream.appendChild(d); scr();
+}
+function scr(){stream.scrollTop=stream.scrollHeight}
+function killWelcome(){const w=document.getElementById('welcome'); if(w)w.remove();}
+function clearChat(){stream.innerHTML='';showWelcome();}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function rich(t){
+  let s=esc(t);
+  s=s.replace(/([A-Za-z]:[\\/][^\s<>"']+?\.(png|jpg|jpeg|gif|bmp|webp))/gi,
+    m=>'<img src="/image?path='+encodeURIComponent(m)+'">');
+  return s;
+}
+function addMsg(role,text){
+  killWelcome();
+  const w=document.createElement('div'); w.className='msg '+(role==='user'?'u':'a');
+  w.innerHTML='<div class="meta"></div><div class="bub"></div>';
+  // ★ 2026-09-19 修 (真缺陷): 原来这里**完全没用 text 参数** —— 实时发言时
+  //   addMsg('user',msg) 只建出一个**空气泡**, 于是界面上只看得到虎哥的回答、
+  //   看不到自己刚问的那句。历史恢复那条路是**显式**填 .bub 的, 所以"过去的问题在、
+  //   刚问的不在" —— 正是用户报的现象。旧界面 ui/index.html 本来是对的 (line 318),
+  //   是三模式新界面重写时漏掉了。
+  if(text)w.querySelector('.bub').innerHTML=rich(text);
+  // 用户气泡也给个"你"标签, 一眼能看出谁说的 (历史恢复同样走这里, 保持一致)
+  if(role==='user')w.querySelector('.meta').innerHTML='<span>你</span>';
+  stream.appendChild(w); scr(); return w;
+}
+function metaHTML(m,intent){
+  const info=MODES[m]||{cn:m};
+  let h='<span class="badge '+(m||'craft')+'">'+esc(info.cn||m||'')+'</span>';
+  if(intent)h+='<span>'+esc(intent)+'</span>';
+  return h;
+}
+
+/* ── 发送 ── */
+async function doSend(forced){
+  const msg=(forced!==undefined?forced:ta.value).trim();
+  if(!msg||busy)return;
+  if(msg.startsWith('@')&&forced===undefined){
+    model=msg.slice(1).trim(); paintModel(); ta.value=''; grow(); return;
+  }
+  if(forced===undefined){ta.value='';grow();}
+  addMsg('user',msg);
+  const box=addMsg('assistant','');
+  box.querySelector('.meta').innerHTML=metaHTML(mode,'');
+  box.querySelector('.bub').innerHTML='<span class="thinking">虎哥在想</span>';
+  busy=true; go.disabled=true;
+  tStat.textContent='执行中…';
+  let full='', done=null;
+  try{
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg,model:model,mode:mode})});
+    if(!r.ok){box.querySelector('.bub').textContent='Error: '+r.status;busy=false;go.disabled=false;return}
+    const rd=r.body.getReader(), dec=new TextDecoder(); let buf='';
+    while(true){
+      const {done:d,value}=await rd.read(); if(d)break;
+      buf+=dec.decode(value,{stream:true});
+      const parts=buf.split('\n'); buf=parts.pop();
+      for(const l of parts){
+        if(!l.startsWith('data:'))continue;
+        let p; try{p=JSON.parse(l.slice(5))}catch(e){continue}
+        if(p.text){full+=p.text; box.querySelector('.bub').innerHTML=rich(full); scr();}
+        if(p.error){box.querySelector('.bub').textContent='Error: '+p.error;}
+        if(p.done){done=p}
+      }
+    }
+  }catch(e){ box.querySelector('.bub').textContent='Error: '+e; }
+  busy=false; go.disabled=false;
+  if(full)box.querySelector('.bub').innerHTML=rich(full);
+  if(done){
+    const m=done.mode||mode;
+    box.querySelector('.meta').innerHTML=metaHTML(m,done.intent)+
+      '<span>'+esc(done.model||'local')+'</span><span>'+done.elapsed+'s</span>';
+    if(done.trace&&done.trace.length)box.appendChild(tracePanel(done.trace));
+    if(done.pending_confirm)box.appendChild(planPanel());
+    tStat.textContent='模型 '+esc(done.model||'local')+' · '+done.elapsed+'s';
+  }else{ tStat.textContent='完成'; }
+  scr();
+}
+function tracePanel(tr){
+  const ok=tr.filter(t=>t.success).length;
+  const w=document.createElement('div'); w.className='steps';
+  const head=document.createElement('div'); head.className='steps-h';
+  head.innerHTML='<span>执行步骤 '+tr.length+'　成功 '+ok+' / 失败 '+(tr.length-ok)+'</span><span>点击收起</span>';
+  const body=document.createElement('div'); body.className='steps-b';
+  tr.forEach((t,i)=>{
+    const e=document.createElement('div'); e.className='st';
+    e.innerHTML='<div class="st-t"><span class="st-n">'+(t.round||i+1)+'.</span>'+
+      '<span class="st-tool">'+esc(t.tool||'')+'</span>'+
+      '<span class="st-s '+(t.success?'ok':'bad')+'">'+(t.success?'✓ 完成':'✗ 失败')+'</span></div>'+
+      (t.args?'<div class="st-args">'+esc(t.args)+'</div>':'')+
+      (t.result?'<div class="st-res">'+esc(t.result)+'</div>':'');
+    body.appendChild(e);
+  });
+  head.onclick=()=>{const h=body.style.display==='none';body.style.display=h?'':'none';
+    head.lastChild.textContent=h?'点击收起':'点击展开'};
+  w.appendChild(head); w.appendChild(body); return w;
+}
+function planPanel(){
+  const w=document.createElement('div'); w.className='plan';
+  w.innerHTML='<div class="plan-h"><span>方案待确认</span><span>执行 / 取消</span></div>'+
+    '<div class="plan-a"><button class="go">执行方案</button><button class="no">取消</button></div>';
+  w.querySelector('.go').onclick=()=>{w.remove();doSend('执行')};
+  w.querySelector('.no').onclick=()=>{w.remove();doSend('取消')};
+  return w;
+}
+
+/* ── 欢迎页 ── */
+function showWelcome(){
+  const DESCS={ask:['只说不做','咨询、构思、写文案、问知识。绝不碰你的文件。'],
+               plan:['先看方案','出可执行步骤，你点头才动手。重要数据走这档。'],
+               craft:['说到做到','文件、命令、桌面、邮件，一句话直接办。']};
+  const w=document.createElement('div'); w.id='welcome';
+  w.innerHTML='<div id="w-title">TIGER.M.M</div>'+
+    '<div id="w-sub">本地优先 · 模型自选 · 听你使唤　　选一个模式开始</div><div id="w-cards"></div>';
+  const c=w.querySelector('#w-cards');
+  MODE_ORDER.forEach(k=>{
+    const v=MODES[k]||{cn:k,desc:''}, dd=DESCS[k]||['',''];
+    const d=document.createElement('div'); d.className='wc';
+    d.innerHTML='<div class="wc-i">'+(ICONS[k]||'·')+'</div>'+
+      '<div class="wc-t">'+esc(v.cn||k)+'</div>'+
+      '<div class="wc-d">'+esc(v.desc||'')+'</div><div class="wc-x">'+esc(dd[1])+'</div>';
+    d.onclick=()=>{setMode(k);ta.focus()};
+    c.appendChild(d);
+  });
+  stream.appendChild(w);
+}
+
+/* ── 侧栏轮询 ── */
+function fmt(s){const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>0?h+'h'+m+'m':m+'m'+(s%60)+'s'}
+async function pollStats(){
+  try{
+    const r=await fetch('/stats'), d=await r.json();
+    const st=document.getElementById('stats');
+    if(d.error){st.innerHTML='<div class="srow"><span>'+esc(d.error)+'</span></div>';return}
+    /* 首次探测成功 → 顶栏状态从初始的"连接中…"改为"已连接"。
+       一次性标志: 不覆盖发消息后的 执行中…/模型 X·Ns/完成 (那是用户操作的结果)。 */
+    if(statInit){statInit=false; tStat.textContent='已连接';}
+    st.innerHTML='<div class="srow"><span>运行</span><b>'+fmt(d.uptime)+'</b></div>'+
+      '<div class="srow"><span>请求</span><b>'+d.total+'</b></div>'+
+      '<div class="srow"><span>错误</span><b>'+d.errors+'</b></div>'+
+      '<div class="srow"><span>会话</span><b>'+d.sessions+'</b></div>';
+  }catch(e){}
+}
+async function pollInbox(){
+  try{
+    const r=await fetch('/inbox'), d=await r.json();
+    const box=document.getElementById('inbox');
+    if(!d.items||!d.items.length){box.innerHTML='<div class="empty">无待审批</div>';return}
+    box.innerHTML='';
+    d.items.forEach(it=>{
+      const cmds=(it.cmds||[]).join('\n')||it.body||'';
+      const el=document.createElement('div'); el.className='ib';
+      el.innerHTML='<div class="ib-t">'+esc(it.title||'')+'</div>'+
+        '<div class="ib-b">'+esc(cmds)+'</div>'+
+        '<div class="ib-a"><button>允许</button><button class="no">拒绝</button></div>';
+      el.querySelectorAll('button')[0].onclick=()=>resolveInbox(it.id,'allow');
+      el.querySelectorAll('button')[1].onclick=()=>resolveInbox(it.id,'deny');
+      box.appendChild(el);
+    });
+  }catch(e){}
+}
+async function resolveInbox(id,res){
+  try{await fetch('/inbox/resolve',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({item_id:id,resolution:res})});}catch(e){}
+  pollInbox();
+}
+(async function init(){
+  await loadModes();
+  try{
+    const r=await fetch('/history'), d=await r.json();
+    const h=d.history||[];
+    if(!h.length){showWelcome();}
+    else{
+      h.forEach(t=>{if(t.role&&t.text){
+        const w=addMsg(t.role==='user'?'user':'assistant','');
+        w.querySelector('.bub').innerHTML=rich(t.text);
+        if(t.role!=='user')w.querySelector('.meta').innerHTML='<span class="badge ask">历史</span>';
+      }});
+      tStat.textContent='已恢复 '+h.length+' 条历史';
+    }
+  }catch(e){showWelcome();}
+})();
+setInterval(pollStats,5000);pollStats();
+setInterval(pollInbox,5000);pollInbox();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   设置模型 —— 2026-10-09 加。装在 ui/app.html（真正伺服的界面）。
+
+   收件人原话: "配置需要自己写 json 文件，我觉得有点拉。"
+   所以: 左栏「模型 · 设置」→ 弹层里选家、粘 Key、点「测一下」当场验、保存即生效。
+   判据与写盘全在后端 core/key_setup.py（与 check_keys.bat 同源），
+   界面只拿掩码 —— Key 全文既不入库也不回显。
+
+   ★ 类名避让: 本页已有全局 .msg / .hint / .ok / .bad, 所以卡片里的说明行用
+     .pmsg、提示行用 .su-hint，别复用那俩（复用会被全局样式改成 flex 列、max-width 82%）。
+   ★ 用事件委托（不用内联 onclick）: 卡片是动态 innerHTML 出来的，
+     内联 onclick 在字符串里极易被引号破坏（本仓踩过）。
+   ══════════════════════════════════════════════════════════════════════════ */
+const setupEl=document.getElementById('setup'),
+      setupBody=document.getElementById('setup-body'),
+      setupSub=document.getElementById('setup-sub'),
+      openSetupBtn=document.getElementById('open-setup');
+let setupState=null,pullTimer=null,cfgCardShown=false;
+
+function esc2(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function openSetup(){setupEl.classList.add('on');refreshSetup(true).then(d=>{if(d)renderSetup(d)})}
+function closeSetup(){setupEl.classList.remove('on');if(pullTimer){clearInterval(pullTimer);pullTimer=null}}
+openSetupBtn.onclick=openSetup;
+document.getElementById('setup-close').onclick=closeSetup;
+setupEl.addEventListener('click',e=>{if(e.target===setupEl)closeSetup()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&setupEl.classList.contains('on'))closeSetup()});
+
+/* 侧栏那个「设置」: 一家都没配好时点亮，让人一眼看到要配 */
+function paintAttn(sum){
+  const attn=!(sum&&sum.usable_count);
+  openSetupBtn.classList.toggle('attn',attn);
+  openSetupBtn.title=attn?'还没配模型 —— 点这里配':'模型配置';
+}
+
+function flash(msg,ok){
+  let el=document.getElementById('setup-flash');
+  if(!el){el=document.createElement('div');el.id='setup-flash';
+    el.className='su-flash';setupSub.parentNode.insertBefore(el,setupBody)}
+  el.className='su-flash '+(ok?'good':'bad');el.textContent=msg;
+}
+
+async function refreshSetup(silent){
+  try{
+    const r=await fetch('/setup'),d=await r.json();
+    if(!d.error){setupState=d;paintAttn(d.summary)}
+    else if(!silent)setupSub.innerHTML='<span class="bad">读配置失败：'+esc2(d.error)+'</span>';
+    return d;
+  }catch(e){
+    if(!silent)setupSub.innerHTML='<span class="bad">连不上引擎：'+esc2(e.message)+'</span>';
+    return null;
+  }
+}
+
+function chipFor(row){
+  if(row.usable)return '<span class="chip ok">已配好</span>';
+  if(row.placeholder)return '<span class="chip wait">占位符要换成真 Key</span>';
+  return '<span class="chip none">还没填</span>';
+}
+
+function cardHtml(row){
+  const known=row.known?'':'<i class="bad">（这个地址不在内置目录里 —— 仍可用，只是引擎不会主动为它排任务）</i>';
+  return '<div class="pcard'+(row.usable?' ok':'')+'" data-slot="'+esc2(row.slot)+'">'+
+    '<div class="row1"><div class="nm">'+esc2(row.name)+
+      (row.doc?'<i>'+esc2(row.doc)+'</i>':'')+known+'</div>'+chipFor(row)+'</div>'+
+    '<div class="flds">'+
+      '<input class="f-key" type="password" autocomplete="off" placeholder="'+
+        (row.key_set?('已存：'+esc2(row.key_mask)+'（要换就粘新的）'):'粘这家的 API Key')+'">'+
+      '<input class="f-url" value="'+esc2(row.url)+'" placeholder="接口地址 url">'+
+      '<input class="f-model" value="'+esc2(row.model)+'" placeholder="模型名">'+
+    '</div>'+
+    '<div class="acts"><button class="b-test">测一下</button><button class="b-save">保存</button></div>'+
+    '<div class="pmsg">'+(row.note?esc2(row.note):'')+'</div>'+
+  '</div>';
+}
+
+function ollamaHtml(d){
+  const ol=d.ollama||{},pull=d.pull||{};
+  let row=null;
+  (d.rows||[]).forEach(x=>{if(x.protocol==='ollama')row=x});
+  let h='<div class="pcard'+(row&&row.usable?' ok':'')+'" data-slot="'+(row?esc2(row.slot):'ollama')+'">';
+  h+='<div class="row1"><div class="nm">本地 Ollama'+
+     '<i>零成本：模型跑在你自己电脑上，不用任何 Key</i></div>'+
+     (ol.running?'<span class="chip ok">在跑</span>':'<span class="chip none">没检测到</span>')+'</div>';
+  if(!ol.running){
+    h+='<div class="pmsg">没连上 '+(ol.base||'')+'。'+
+       (ol.cli?'装了 ollama 命令、但服务没在跑 —— 打开 Ollama 窗口，再点「刷新」。'
+              :'这台机器还没装 Ollama —— 去 ollama.com 下 Windows 版装上，装完回来点「刷新」。')+
+       '</div><div class="acts"><button class="b-refresh">刷新</button></div>';
+    if(row)h+='<div class="flds" style="margin-top:8px"><input class="f-url" value="'+esc2(row.url)+'">'+
+      '<input class="f-model" value="'+esc2(row.model)+'"></div>'+
+      '<div class="acts"><button class="b-save">保存</button></div><div class="pmsg"></div>';
+    return h+'</div>';
+  }
+  const models=ol.models||[];
+  h+='<div class="pmsg">这台机器上已经有 <b>'+models.length+'</b> 个模型'+
+     (models.length?'：'+esc2(models.slice(0,6).join(' · '))+(models.length>6?' …':''):'')+'</div>';
+  if(models.length){
+    h+='<div class="flds"><select class="f-pick">';
+    models.forEach(m=>{
+      h+='<option value="'+esc2(m)+'"'+((row&&row.model===m)?' selected':'')+'>'+esc2(m)+'</option>';
+    });
+    h+='</select><input class="f-url" value="'+esc2(row?row.url:'http://127.0.0.1:11434/v1')+'"></div>';
+    h+='<div class="acts"><button class="b-use">用这个模型</button>'+
+       '<button class="b-test">测一下</button><button class="b-save">保存</button></div>';
+  }
+  h+='<div class="flds" style="margin-top:8px"><input class="f-pull" '+
+     'placeholder="本机没有的模型名，如 qwen2.5:7b —— 填好点右边「拉取」"></div>';
+  h+='<div class="acts"><button class="b-pull">拉取</button>'+
+     '<span class="chip none" id="pull-chip" style="display:none"></span></div>';
+  h+='<div class="pmsg"></div>';
+  h+='<pre class="pull-log"'+(pull&&(pull.log||[]).length?'':' style="display:none"')+'>'+
+     esc2(((pull||{}).log||[]).join('\n'))+'</pre>';
+  return h+'</div>';
+}
+
+function renderSetup(d){
+  const sum=d.summary||{},rows=d.rows||[];
+  paintAttn(sum);
+  paintModelButtons(d);
+  setupSub.innerHTML='已配好 <b>'+sum.usable_count+'/'+sum.total+'</b> 家'+
+    (sum.usable_count?'（'+esc2((sum.usable||[]).join(' · '))+'）':'')+
+    ' —— 一家就够用。填完先点「测一下」（真连一次），再点「保存」，<b>不用重启</b>。<br>'+
+    '改的是 '+esc2(d.keys_path||'')+'（改前自动备份，Key 只存在你自己机器上）。';
+
+  let h='<div class="grp">不想花钱 · 本地模型</div>'+ollamaHtml(d);
+  h+='<div class="grp">云端模型 · 填哪家就送哪家</div>';
+  const cloud=[];
+  rows.forEach(r=>{if(r.protocol!=='ollama')cloud.push(cardHtml(r))});
+  h+=cloud.length?cloud.join(''):'<div class="pcard"><div class="pmsg">配置里没有云端模型的段。</div></div>';
+  h+='<div class="su-hint">· 厂商由 <b>地址</b> 决定，不由 Key 长相决定 —— 填了哪家的 url 就送哪家。<br>'+
+     '· 想加别家（任何 OpenAI 兼容服务）：照上面任意一张卡的样子加一段，改名字、填 key 和 url 即可。</div>';
+  setupBody.innerHTML=h;
+  if(d.pull&&d.pull.running)startPullPolling();
+}
+
+/* ── 事件委托: 卡片是动态生成的，别用内联 onclick ── */
+setupBody.addEventListener('click',e=>{
+  const b=e.target.closest?e.target.closest('button'):null;
+  if(!b)return;
+  const card=b.closest('.pcard'); if(!card)return;
+  const slot=card.dataset.slot||'';
+  if(b.classList.contains('b-test'))return doTest(slot,card,b);
+  if(b.classList.contains('b-save'))return doSave(slot,card,b);
+  if(b.classList.contains('b-use'))return doUse(slot,card,b);
+  if(b.classList.contains('b-pull'))return doPull(card,b);
+  if(b.classList.contains('b-refresh'))return refreshSetup(true).then(d=>{if(d)renderSetup(d)});
+});
+
+function cardCfg(card){
+  const q=s=>{const el=card.querySelector(s);return el?el.value.trim():''};
+  const pick=card.querySelector('.f-pick');
+  return {key:q('.f-key'),url:q('.f-url'),model:pick?pick.value:q('.f-model')};
+}
+
+async function doTest(slot,card,btn){
+  const m=card.querySelector('.pmsg'),cfg=cardCfg(card);
+  btn.disabled=true;const old=btn.textContent;btn.textContent='测…';
+  m.className='pmsg';m.textContent='正在真连一次问那家…（最长等 90 秒）';
+  try{
+    const body={slot:slot};
+    if(cfg.key)body.cfg=cfg;                 // 先测后存: 填了就测这份还没保存的
+    const r=await fetch('/setup/test',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    m.className='pmsg '+(d.ok?'good':'bad');
+    m.textContent=(d.ok?'✓ ':'✗ ')+(d.message||(d.ok?'可用':'不行'))+
+      (d.elapsed!=null?('（'+d.elapsed+'s）'):'');
+    if(d.raw)m.textContent+='\n底层原话: '+d.raw;
+  }catch(e){m.className='pmsg bad';m.textContent='✗ 请求本身失败了：'+e.message}
+  btn.disabled=false;btn.textContent=old;
+}
+
+async function doSave(slot,card,btn){
+  const m=card.querySelector('.pmsg'),cfg=cardCfg(card);
+  const body={slot:slot,url:cfg.url,model:cfg.model};
+  if(cfg.key)body.key=cfg.key;               // 空 = 不动（别把已存的好 Key 冲掉）
+  btn.disabled=true;const old=btn.textContent;btn.textContent='存…';
+  try{
+    const r=await fetch('/setup/save',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!d.ok){m.className='pmsg bad';m.textContent='✗ '+(d.error||'保存失败');
+      btn.disabled=false;btn.textContent=old;return}
+    flash('✓ '+(d.slot||slot)+' 已保存'+
+      (d.backup?('（旧配置备份为 '+d.backup+'）'):'')+' · '+(d.reload?d.reload.note:'')+
+      ' · 再点一次「测一下」确认',true);
+    await refreshSetup(true);
+    if(setupState)renderSetup(setupState);
+    addConfigCardIfNeeded();      // 配好了就把欢迎页那张卡撤掉
+  }catch(e){m.className='pmsg bad';m.textContent='✗ 请求本身失败了：'+e.message;
+    btn.disabled=false;btn.textContent=old}
+}
+
+/* Ollama: 用选中的模型 —— 顺手把 key(占位)+url+model 一起写对 */
+async function doUse(slot,card,btn){
+  const cfg=cardCfg(card),pick=card.querySelector('.f-pick');
+  if(!pick||!pick.value){flash('先在上面选一个模型',false);return}
+  btn.disabled=true;const old=btn.textContent;btn.textContent='…';
+  try{
+    const r=await fetch('/setup/save',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({slot:slot||'ollama',key:'ollama',
+                           url:cfg.url||'http://127.0.0.1:11434/v1',model:pick.value})});
+    const d=await r.json();
+    flash(d.ok?('✓ 已切到本地模型 '+pick.value+' · '+(d.reload?d.reload.note:'')):('✗ '+(d.error||'失败')),!!d.ok);
+    await refreshSetup(true);
+    if(setupState)renderSetup(setupState);
+    addConfigCardIfNeeded();
+  }catch(e){flash('✗ '+e.message,false);btn.disabled=false;btn.textContent=old}
+}
+
+async function doPull(card,btn){
+  const inp=card.querySelector('.f-pull'),model=inp?inp.value.trim():'';
+  if(!model){flash('先填要拉的模型名，例如 qwen2.5:7b',false);return}
+  const m=card.querySelector('.pmsg');
+  btn.disabled=true;const old=btn.textContent;btn.textContent='拉…';
+  m.className='pmsg';m.textContent='已开始拉取 '+model+'（模型几个 GB，慢慢下；下面有进度）';
+  try{
+    const r=await fetch('/setup/ollama_pull',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({model:model})});
+    const d=await r.json();
+    if(!d.ok){m.className='pmsg bad';m.textContent='✗ '+(d.message||'开不了拉取');
+      btn.disabled=false;btn.textContent=old;return}
+    m.textContent='正在拉 '+model+' …（进度见下）';
+    startPullPolling();
+  }catch(e){m.className='pmsg bad';m.textContent='✗ '+e.message}
+  btn.disabled=false;btn.textContent=old;
+}
+
+function startPullPolling(){
+  if(pullTimer)clearInterval(pullTimer);
+  const tick=async()=>{
+    try{
+      const r=await fetch('/setup/ollama_pull'),d=await r.json();
+      const pre=setupBody.querySelector('.pull-log'),chip=document.getElementById('pull-chip');
+      if(pre){pre.style.display='block';pre.textContent=(d.log||[]).join('\n');pre.scrollTop=pre.scrollHeight}
+      if(chip){chip.style.display='inline-block';
+        chip.textContent=d.running?('拉取中 '+d.elapsed+'s'):(d.ok===true?'拉好了':(d.ok===false?'拉取失败':'未在拉取'));
+        chip.className='chip '+(d.running?'wait':(d.ok===true?'ok':'none'))}
+      if(!d.running){clearInterval(pullTimer);pullTimer=null;
+        if(d.ok===true){refreshSetup(true).then(x=>{if(x)renderSetup(x)});addConfigCardIfNeeded()}}
+    }catch(e){}
+  };
+  tick();pullTimer=setInterval(tick,2500);
+}
+
+/* ── 欢迎页那张「先配个模型」的卡（没配好才出）── */
+function addConfigCardIfNeeded(){
+  refreshSetup(true).then(d=>{
+    if(!d||!d.summary)return;
+    let el=document.getElementById('wc-setup');
+    if(d.summary.usable_count){ if(el)el.remove(); return }
+    if(el)return;
+    const c=document.getElementById('w-cards');
+    if(!c)return;
+    el=document.createElement('div');
+    el.id='wc-setup'; el.className='wc';
+    el.style.borderColor='rgba(255,172,2,.45)';
+    el.innerHTML='<div class="wc-i">⚙</div><div class="wc-t">先配个模型</div>'+
+      '<div class="wc-d">还没配任何模型 —— 现在只能答本地规则的问题。</div>'+
+      '<div class="wc-x">点这里：选一家、粘 Key、点「测一下」就好，不用改任何文件</div>';
+    el.onclick=openSetup;
+    c.appendChild(el);
+  });
+}
+const _origShowWelcome=showWelcome;
+showWelcome=function(){_origShowWelcome();addConfigCardIfNeeded()};
+
+/* 配了哪家, 模型按钮就多一个 —— 否则配好 GLM 也选不到 (2026-10-09)
+   原按钮是**写死四个** (auto/deepseek/mimo/ollama), 而且是初始化时一次绑完的,
+   所以新加的按钮必须自己绑 onclick (不能再靠那句 forEach)。 */
+function paintModelButtons(d){
+  const box=document.getElementById('models'); if(!box||!d||!d.rows) return;
+  const have={}; box.querySelectorAll('button').forEach(b=>have[b.dataset.m]=1);
+  d.rows.forEach(r=>{
+    if(!r.usable||have[r.slot]) return;
+    const b=document.createElement('button');
+    b.dataset.m=r.slot; b.textContent=r.slot; b.title=(r.name||'')+' 已就绪';
+    b.onclick=()=>{ model=r.slot; paintModel(); };
+    box.appendChild(b);
+  });
+  // 选中的那家要是变不可用了, 退回 auto —— 免得点了没反应
+  try{
+    if(model!=='auto' && !d.rows.some(r=>r.slot===model&&r.usable)){
+      model='auto'; paintModel();
+    }
+  }catch(e){}
+}
+
+/* 起页面先看一眼配没配 */
+refreshSetup(true).then(d=>{ paintModelButtons(d); addConfigCardIfNeeded(); });
+</script>
+</body>
+</html>

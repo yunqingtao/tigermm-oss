@@ -1,0 +1,119 @@
+{
+  "transfer": "Hermes + OpenClaw -> Tiger.M.M Full Capability Transfer",
+  "version": "1.0",
+  "timestamp": "2026-06-26 22:37:05",
+  "kernels": {
+    "hermes": {
+      "module": "mary3.core.hermes_kernel",
+      "size_bytes": 30481,
+      "capabilities": [
+        "stealth_http_request",
+        "js_reverse_engineer",
+        "page_structure_map",
+        "crawl_plan_execute",
+        "anti_block_adapt",
+        "headless_control",
+        "traffic_sniff_analyze",
+        "api_endpoint_discover",
+        "form_auto_submit",
+        "captcha_evade",
+        "multi_thread_schedule",
+        "network_masquerade"
+      ],
+      "entry_points": {
+        "StealthSession": "Anti-detection HTTP session with browser impersonation",
+        "JSReverseEngineer": "JS parsing, API extraction, token discovery",
+        "PageMapper": "Site structure mapping, form extraction, link discovery",
+        "CrawlPlanner": "Autonomous crawl planning and adaptive execution",
+        "AntiBlockEngine": "Real-time block detection and strategy rotation",
+        "HeadlessController": "Headless browser stealth config and JS injection",
+        "TrafficSniffer": "XHR/AJAX pattern analysis, API categorization"
+      }
+    },
+    "openclaw": {
+      "module": "mary3.core.openclaw_kernel",
+      "size_bytes": 40436,
+      "capabilities": [
+        "win32_api_control",
+        "process_inject",
+        "registry_read_write",
+        "software_automate_com",
+        "window_manipulate",
+        "file_deep_traverse",
+        "system_orchestrate",
+        "privilege_escalate",
+        "local_script_generate",
+        "sandbox_detect_escape",
+        "port_listen_local",
+        "process_hijack"
+      ],
+      "entry_points": {
+        "Win32Core": "Low-level Win32 API: process, memory, privileges",
+        "ProcessInjector": "Process injection, shellcode, DLL loading",
+        "SystemOrchestrator": "System info, process kill, network connections",
+        "RegistryEngine": "Registry read/write/enumerate across all hives",
+        "SoftwareAutomator": "COM automation for Excel/Word/WPS/Office",
+        "WindowEngine": "Window enumeration, focus, send keys, screenshot",
+        "FileSystemEngine": "Deep traversal, pattern search, secure delete",
+        "LocalScriptEngine": "PowerShell generation, scheduled tasks, self-replication",
+        "SandboxDetector": "Multi-method sandbox/vm detection"
+      }
+    }
+  },
+  "integration": {
+    "chain_engine_hook": "launcher.py L1481: is_chain_task() -> ChainEngine.solve()",
+    "kernel_loading": "Both kernels auto-loaded at Level4Pipeline.__init__"
+  },
+  "thinking_fusion": {
+    "hermes": "Assess -> Strategize -> Probe -> Extract -> Adapt -> Verify",
+    "openclaw": "Enumerate -> Identify -> Assess -> Select -> Escalate -> Verify",
+    "chain": "Decide -> Execute -> Verify -> Absorb -> Repeat"
+  },
+  "capability_matrix": {
+    "web_scraping": [
+      "StealthSession",
+      "CrawlPlanner",
+      "PageMapper"
+    ],
+    "anti_detection": [
+      "AntiBlockEngine",
+      "StealthSession"
+    ],
+    "js_reverse": [
+      "JSReverseEngineer",
+      "TrafficSniffer"
+    ],
+    "headless_browser": [
+      "HeadlessController"
+    ],
+    "form_automation": [
+      "PageMapper",
+      "StealthSession.extract_forms"
+    ],
+    "system_control": [
+      "Win32Core",
+      "SystemOrchestrator"
+    ],
+    "process_manipulation": [
+      "ProcessInjector",
+      "Win32Core"
+    ],
+    "registry_ops": [
+      "RegistryEngine"
+    ],
+    "software_automation": [
+      "SoftwareAutomator",
+      "WindowEngine"
+    ],
+    "file_ops": [
+      "FileSystemEngine"
+    ],
+    "privilege_escalation": [
+      "Win32Core.enable_privilege"
+    ],
+    "sandbox_escape": [
+      "SandboxDetector",
+      "ProcessInjector"
+    ]
+  }
+}

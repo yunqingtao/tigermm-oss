@@ -1,0 +1,70 @@
+{
+  "截图": {
+    "patterns": [
+      "截图",
+      "截屏",
+      "屏幕截图",
+      "screenshot",
+      "capture",
+      "拍屏"
+    ],
+    "tool": "windows_desktop",
+    "params": {
+      "action": {
+        "type": "fixed",
+        "value": "screenshot"
+      }
+    }
+  },
+  "打字": {
+    "patterns": [
+      "打字",
+      "输入",
+      "type"
+    ],
+    "tool": "windows_desktop",
+    "params": {
+      "action": {
+        "type": "fixed",
+        "value": "type_text"
+      },
+      "text": {
+        "type": "string"
+      }
+    },
+    "extract": {
+      "text": {
+        "mode": "after_keyword",
+        "strip_leading": [
+          "一个",
+          "一段",
+          "个"
+        ],
+        "strip_tail": [
+          "到",
+          "在"
+        ]
+      }
+    }
+  },
+  "移动鼠标": {
+    "patterns": [
+      "移动鼠标",
+      "挪鼠标",
+      "鼠标到"
+    ],
+    "tool": "windows_desktop",
+    "params": {
+      "action": {
+        "type": "fixed",
+        "value": "mouse_move"
+      },
+      "x": {
+        "type": "string"
+      },
+      "y": {
+        "type": "string"
+      }
+    }
+  }
+}
